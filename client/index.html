@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Multiplayer Game Lobby - Snake and Ladder, Tic-Tac-Toe, Ludo">
+  <title>Multiplayer Game Lobby</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Game Lobby</h1>
+    <p>Please enter your name to start:</p>
+    
+    <input type="text" id="playerName" placeholder="Enter your name" required>
+    <button id="enterNameButton">Submit</button>
+
+    <div id="roomOptions" class="hidden">
+      <h2>Hello <span id="displayName"></span>!</h2>
+      <p>Would you like to create a new game room or join an existing one?</p>
+
+      <div class="buttons">
+        <button id="createRoomButton">Create Room</button>
+        <button id="joinRoomButton">Join Room</button>
+      </div>
+
+      <div id="joinRoomForm" class="hidden">
+        <input type="text" id="roomId" placeholder="Enter room ID">
+        <button id="joinRoomSubmitButton">Join</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

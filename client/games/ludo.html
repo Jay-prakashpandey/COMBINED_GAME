@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Multiplayer Ludo Game">
+  <title>Ludo Game</title>
+  <link rel="stylesheet" href="../css/game.css">
+</head>
+<body>
+  <h1>Ludo Game</h1>
+
+  <div id="game-board">
+    <!-- Ludo board can be an image or HTML elements -->
+    <p>Game board will go here</p>
+  </div>
+
+  <div id="game-controls">
+    <button id="roll-dice">Roll Dice</button>
+    <p id="dice-result">Dice: <span id="dice-value">0</span></p>
+    <p id="turn-indicator">Player 1's Turn</p>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="../js/ludo.js"></script>
+</body>
+</html>

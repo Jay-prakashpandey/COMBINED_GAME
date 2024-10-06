@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Multiplayer Game Room">
+  <title>Game Room</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Game Room</h1>
+    <p>Room ID: <span id="roomIdDisplay"></span></p>
+
+    <div>
+      <p>Player 1: <span id="player1Name">Waiting...</span></p>
+      <p>Player 2: <span id="player2Name">Waiting for Player 2...</span></p>
+      <p>gameSelected: <span id="gameSelected" class="hidden"></span> </p>
+    </div>
+
+    <div id="gameSelection" class="hidden">
+      <label for="gameSelect">Choose a game:</label>
+      <select id="gameSelect">
+        <option value="Tic-Tac-Toe">Tic-Tac-Toe</option>
+        <option value="Snake and Ladder">Snake and Ladder</option>
+        <option value="Ludo">Ludo</option>
+        <option value="Truth-Dare">Truth-Dare</option>
+      </select>
+      <button id="startGameButton" class="hidden">Start Game</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/room.js"></script>
+</body>
+</html>

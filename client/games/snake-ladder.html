@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Multiplayer Snake and Ladder Game">
+  <title>Snake and Ladder</title>
+  <link rel="stylesheet" href="../css/game.css">
+</head>
+<body>
+  <h1>Snake and Ladder Game</h1>
+
+  <div id="game-board">
+    <table>
+      <!-- 10x10 Snake and Ladder board will be generated dynamically -->
+      <tbody id="board"></tbody>
+    </table>
+    <div id="board-overlay"></div>
+  </div>
+
+  <div id="game-controls">
+    <button id="roll-dice">Roll Dice</button>
+    <p id="dice-result">Dice: <span id="dice-value">0</span></p>
+    <p id="turn-indicator">Player 1's Turn</p>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="../js/snake-ladder.js"></script>
+</body>
+</html>
