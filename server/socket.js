@@ -4,7 +4,7 @@ function handleSocketConnection(io) {
     io.on('connection', (socket) => {
         
         console.log('A user connected with socket ID:', socket.id);
-
+        // create a room 
         socket.on('create-room', ({ playerName }) => {
             try {
                 const roomId = `room_${Math.floor(Math.random() * 10000)}`;
@@ -18,9 +18,28 @@ function handleSocketConnection(io) {
 
         // Room update 
         socket.on('join-room', ({ playerName, roomId }) => {
-            // console.log('join-room '+roomId +' data: '+rooms[roomId].player1 +' , '+rooms[roomId].player2);
-            // rooms[roomId].player2=playerName;
             socket.emit('room-joined', ({ playerName, roomId }));
+        });
+
+        // Handle player reconnection
+        socket.on('reconnect-room', ({ roomId, playerName }) => {
+            const room = rooms[roomId];
+
+            if (room) {
+                // Join the room again
+                socket.join(roomId);
+
+                // Send the current game state to the reconnected player
+                socket.emit('reconnected', {
+                    board: room.ticTacToe.board,
+                    currentPlayer: room.ticTacToe.currentPlayer,
+                    userSymbol: room.player1.name === playerName ? 'X' : 'O'
+                });
+
+                console.log(`${playerName} reconnected to room ${roomId}`);
+            } else {
+                socket.emit('error', { message: 'Room does not exist' });
+            }
         });
 
         socket.on('getPlayerSymbol', ({ roomId, currentUser }) => {
@@ -32,7 +51,7 @@ function handleSocketConnection(io) {
             }
         
             let playerSymbol = null;
-            socket.join(roomId);
+            // socket.join(roomId);
         
             if (room.player1 && room.player1.name === currentUser) {
                 playerSymbol = room.player1.Symbol;  // Corrected the casing of "symbol"
@@ -111,13 +130,10 @@ function handleSocketConnection(io) {
                 io.to(roomId).emit('move-made', { position: position, playerSymbol: playerSymbol });
                 // Check for winner or draw
                 const winner = checkWinner(board, roomId);
-                
                 if (winner) {
                     io.in(roomId).emit('tic-tac-toe-winner', { winner });
-                    // resetTicTacToe(roomId); // Reset game state after a win
                 } else if (board.every(cell => cell !== null)) {
                     io.in(roomId).emit('game-draw');
-                    // resetTicTacToe(roomId); // Reset game state after a draw
                 }
             }
         });
@@ -131,7 +147,8 @@ function handleSocketConnection(io) {
         socket.on('resetTicTacToe', ({ roomId }) => {
             if (rooms[roomId]) {
                 rooms[roomId].ticTacToe.board = Array(9).fill(null);
-                // rooms[roomId].ticTacToe.currentPlayer = 'X';
+                // Notify the game reseted
+                io.to(roomId).emit('game-reseted', {});
             }
         });
         
@@ -148,12 +165,12 @@ function checkWinner(board, roomId) {
 
     for (const pattern of winPatterns) {
         const [a, b, c] = pattern;
-    
+        // console.log(board[a]+','+board[b]+','+board[c]);
         if (board[a] && board[a] === board[b] && board[a] === board[c]) {
             let winner=null;
             if(rooms[roomId].player1.Symbol === board[a]) {
                 winner = rooms[roomId].player1.name;
-            }else if(winner !== null){
+            }else{
                 winner = rooms[roomId].player2.name;
             }
             return winner; // Return the winner ('X' or 'O')
@@ -161,8 +178,6 @@ function checkWinner(board, roomId) {
     }
     return null; // No winner yet
 }
-
-
 
 // export default { handleSocketConnection };
 module.exports = { handleSocketConnection };

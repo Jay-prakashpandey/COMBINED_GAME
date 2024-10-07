@@ -3,17 +3,25 @@ const socket = io();
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get('roomId');
 const currentUser = urlParams.get('currentUser');
-// Request player symbol
-socket.emit('getPlayerSymbol', { roomId, currentUser });
-// Listen for the player symbol response
+
 let playerSymbol = null; // The symbol ('X' or 'O') assigned to the current user
-socket.on('playerSymbol', ({ symbol }) => {
-  alert(symbol);
-  playerSymbol=symbol;
-});
 let activePlayer = "X"; // The player whose turn it currently is
 const cells = document.querySelectorAll(".cell");
 const turnIndicator = document.getElementById("turn-indicator");
+
+// Request the game state when reconnecting
+socket.emit('reconnect-room', { roomId, playerName: currentUser });
+
+// Handle receiving the game state after reconnection
+socket.on('reconnected', ({ board, currentPlayer, userSymbol }) => {
+    // Update the board with the current game state
+    cells.forEach((cell, index) => {
+        cell.textContent = board[index] || '';
+    });
+    playerSymbol= userSymbol;
+    activePlayer = currentPlayer;
+    turnIndicator.textContent = `Player ${activePlayer}'s Turn`;
+});
 
 function disableBoard() {
   cells.forEach( cell => cell.removeEventListener("click", handleCellClick));
@@ -30,7 +38,6 @@ function enableBoard(reset) {
 function handleCellClick(e) {
   const cell = e.target;
   const position = parseInt(cell.id); // Get cell index from data attribute
-  // alert(activePlayer+' , '+playerSymbol+','+ position);
   socket.emit("make-move", { roomId, position, playerSymbol });
 }
 
@@ -40,12 +47,15 @@ cells.forEach((cell) => {
 
 document.getElementById('reset-game').addEventListener('click', () => {
   socket.emit("resetTicTacToe",{ roomId } );
+});
+
+// reset room 
+socket.on('game-reseted',({}) => {
   document.getElementById('reset-game').classList.add('hidden');
   enableBoard("True");
 });
 
-
-  // Listen for a move from the other player
+// Listen for a move from the other player
 socket.on('move-made', ({ position, playerSymbol }) => {
   document.getElementById(position).textContent = playerSymbol;
 
