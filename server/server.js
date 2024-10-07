@@ -3,8 +3,8 @@ const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const path = require('path');
-const { handleSocketConnection } = require('./socket').default; // Import socket handling code
-
+// const { handleSocketConnection } = require('./socket').default; // Import socket handling code
+const { handleSocketConnection } = require('./socket');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {

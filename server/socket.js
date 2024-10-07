@@ -164,4 +164,5 @@ function checkWinner(board, roomId) {
 
 
 
-export default { handleSocketConnection };
+// export default { handleSocketConnection };
+module.exports = { handleSocketConnection };
