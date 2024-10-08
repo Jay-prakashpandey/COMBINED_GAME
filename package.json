@@ -7,14 +7,13 @@
     "start": "node server/server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.5.4",
-    "ejs": "^3.1.8",
-    "dotenv": "^16.0.3",
-    "cors": "^2.8.5",
-    "path": "^0.12.7"
+    "express": "^4.21.0",
+    "socket.io": "^4.8.0",
+    "ejs": "^3.1.10",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {},
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "keywords": []
 }
