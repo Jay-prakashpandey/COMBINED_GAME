@@ -1,27 +1,31 @@
 const socket = io();
-document.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const roomId = urlParams.get('roomId');
-  let currentPlayer = 1;
 
-  const rollDiceButton = document.getElementById("roll-dice");
-  const diceValueDisplay = document.getElementById("dice-value");
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get('roomId');
+const currentUser = urlParams.get('currentUser');
 
-  rollDiceButton.addEventListener("click", () => {
-    const diceRoll = Math.floor(Math.random() * 6) + 1;
-    socket.emit("roll-dice-ludo", { roomId, currentPlayer, diceRoll });
-  });
+let playerSymbol = null; // The symbol ('X' or 'O') assigned to the current user
+let activePlayer = "X"; // The player whose turn it currently is
+const cells = document.querySelectorAll(".cell");
+const turnIndicator = document.getElementById("turn-indicator");
 
-  socket.on("dice-result-ludo", ({ diceRoll, player }) => {
-    diceValueDisplay.textContent = `Player ${player} rolled: ${diceRoll}`;
-    currentPlayer = player === 1 ? 2 : 1;
-  });
+const rollDiceButton = document.getElementById("roll-dice");
+const diceValueDisplay = document.getElementById("dice-value");
 
-  socket.on("ludo-game-update", (gameState) => {
-    // Update game board logic with gameState positions, etc.
-  });
+rollDiceButton.addEventListener("click", () => {
+  const diceRoll = Math.floor(Math.random() * 6) + 1;
+  socket.emit("roll-dice-ludo", { roomId, currentPlayer, diceRoll });
+});
 
-  socket.on("ludo-game-finished", ({ winner }) => {
-    alert(`Player ${winner} wins the Ludo game!`);
-  });
+socket.on("dice-result-ludo", ({ diceRoll, player }) => {
+  diceValueDisplay.textContent = `Player ${player} rolled: ${diceRoll}`;
+  currentPlayer = player === 1 ? 2 : 1;
+});
+
+socket.on("ludo-game-update", (gameState) => {
+  // Update game board logic with gameState positions, etc.
+});
+
+socket.on("ludo-game-finished", ({ winner }) => {
+  alert(`Player ${winner} wins the Ludo game!`);
 });

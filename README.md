@@ -66,18 +66,47 @@ body {
   }
   
   td {
+    border: 2px solid #333;
+    font-size: 40px;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+  }
+
+  .cell {
+    width: 33.33%; /* Cells take 1/3 of the table width */
+    height: 33.33%; /* Cells take 1/3 of the table height */
+    font-size: 3rem; /* Increase font size for visibility */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .cell:hover {
+      background-color: #e6e6e6; /* Highlight cell on hover */
+  }
+
+  .hidden {
+    display: none;
+  }
+  /* td {
     border: 1px solid #ddd;
     width: 33%;
     height: 33%;
     font-size: 40px;
     text-align: center;
     vertical-align: middle;
-  }
+  } */
   
   #game-controls {
     margin-top: 20px;
   }
   
+  #turn-indicator {
+    margin-top: 10px;
+    font-size: 24px;
+    color: #555;
+  }
+
   #roll-dice {
     padding: 10px 20px;
     font-size: 16px;
@@ -97,9 +126,28 @@ body {
     margin-top: 10px;
     font-size: 18px;
   }
-  --------------------------
-  client/css/style.js:
-  /* General Styles */
+  
+  /* .cell {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    border: 1px solid #000;
+  } */
+
+@media (max-width: 600px) {
+  td {
+      font-size: 24px; /* Adjust font size for smaller screens */
+  }
+  .cell {
+      font-size: 2rem;
+  }
+}
+--------------------------
+client/css/style.js:
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -119,7 +167,7 @@ body {
 }
 
 /* Game-specific Styles */
-#game-board {
+/* #game-board {
     display: inline-block;
     margin: 20px auto;
     max-width: 600px;
@@ -127,7 +175,7 @@ body {
     aspect-ratio: 1/1;
     position: relative;
     border: 2px solid #ddd;
-}
+} */
 
 table {
     width: 100%;
@@ -169,9 +217,65 @@ button:disabled {
     font-size: 18px;
 }
 
+/* Basic styling for the game room */
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1, p {
+    margin-bottom: 20px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  /* Styling the dropdown (gameSelect) */
+  #gameSelect {
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+  }
+  
+  /* Styling the game selection button */
+  #gameSelectionButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  #gameSelectionButton:hover {
+    background-color: #45a049;
+  }
+  
+  /* Styling for room and player information */
+  #roomIdDisplay, #player1Name, #player2Name {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  
+  /* Button hover and focus effects */
+  button:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+    border: 1px solid rgba(81, 203, 238, 1);
+  }
   --------------------------
-  client/games/ludo.html:
-  <!DOCTYPE html>
+client/games/ludo.html:
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -199,7 +303,7 @@ button:disabled {
 </body>
 </html>
 ------------------------
-snake-ladder.html
+client/games/snake-ladder.html:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -211,7 +315,6 @@ snake-ladder.html
 </head>
 <body>
   <h1>Snake and Ladder Game</h1>
-
   <div id="game-board">
     <table>
       <!-- 10x10 Snake and Ladder board will be generated dynamically -->
@@ -219,19 +322,17 @@ snake-ladder.html
     </table>
     <div id="board-overlay"></div>
   </div>
-
   <div id="game-controls">
     <button id="roll-dice">Roll Dice</button>
     <p id="dice-result">Dice: <span id="dice-value">0</span></p>
     <p id="turn-indicator">Player 1's Turn</p>
   </div>
-
   <script src="/socket.io/socket.io.js"></script>
   <script src="../js/snake-ladder.js"></script>
 </body>
 </html>
 --------------------
-tic-tac-toe.html:
+client/games/tic-tac-toe.html:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -243,99 +344,115 @@ tic-tac-toe.html:
 </head>
 <body>
   <h1>Tic-Tac-Toe Game</h1>
-
   <div id="game-board">
     <table>
       <tr>
-        <td class="cell" id="cell-0"></td>
-        <td class="cell" id="cell-1"></td>
-        <td class="cell" id="cell-2"></td>
+        <td class="cell" id="0"></td>
+        <td class="cell" id="1"></td>
+        <td class="cell" id="2"></td>
       </tr>
       <tr>
-        <td class="cell" id="cell-3"></td>
-        <td class="cell" id="cell-4"></td>
-        <td class="cell" id="cell-5"></td>
+        <td class="cell" id="3"></td>
+        <td class="cell" id="4"></td>
+        <td class="cell" id="5"></td>
       </tr>
       <tr>
-        <td class="cell" id="cell-6"></td>
-        <td class="cell" id="cell-7"></td>
-        <td class="cell" id="cell-8"></td>
+        <td class="cell" id="6"></td>
+        <td class="cell" id="7"></td>
+        <td class="cell" id="8"></td>
       </tr>
     </table>
   </div>
-
   <div id="game-controls">
     <p id="turn-indicator">Player X's Turn</p>
+    <div id="reset-game" class="hidden"><button>Play-Again</button></div>
   </div>
-
   <script src="/socket.io/socket.io.js"></script>
   <script src="../js/tic-tac-toe.js"></script>
 </body>
 </html>
 -------------------------
-client/js/ludo.js
+client/js/ludo.js:
 const socket = io();
-document.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const roomId = urlParams.get('roomId');
-  let currentPlayer = 1;
 
-  const rollDiceButton = document.getElementById("roll-dice");
-  const diceValueDisplay = document.getElementById("dice-value");
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get('roomId');
+const currentUser = urlParams.get('currentUser');
 
-  rollDiceButton.addEventListener("click", () => {
-    const diceRoll = Math.floor(Math.random() * 6) + 1;
-    socket.emit("roll-dice-ludo", { roomId, currentPlayer, diceRoll });
-  });
+let playerSymbol = null; // The symbol ('X' or 'O') assigned to the current user
+let activePlayer = "X"; // The player whose turn it currently is
+const cells = document.querySelectorAll(".cell");
+const turnIndicator = document.getElementById("turn-indicator");
 
-  socket.on("dice-result-ludo", ({ diceRoll, player }) => {
-    diceValueDisplay.textContent = `Player ${player} rolled: ${diceRoll}`;
-    currentPlayer = player === 1 ? 2 : 1;
-  });
+const rollDiceButton = document.getElementById("roll-dice");
+const diceValueDisplay = document.getElementById("dice-value");
 
-  socket.on("ludo-game-update", (gameState) => {
-    // Update game board logic with gameState positions, etc.
-  });
+rollDiceButton.addEventListener("click", () => {
+  const diceRoll = Math.floor(Math.random() * 6) + 1;
+  socket.emit("roll-dice-ludo", { roomId, currentPlayer, diceRoll });
+});
 
-  socket.on("ludo-game-finished", ({ winner }) => {
-    alert(`Player ${winner} wins the Ludo game!`);
-  });
+socket.on("dice-result-ludo", ({ diceRoll, player }) => {
+  diceValueDisplay.textContent = `Player ${player} rolled: ${diceRoll}`;
+  currentPlayer = player === 1 ? 2 : 1;
+});
+
+socket.on("ludo-game-update", (gameState) => {
+  // Update game board logic with gameState positions, etc.
+});
+
+socket.on("ludo-game-finished", ({ winner }) => {
+  alert(`Player ${winner} wins the Ludo game!`);
 });
 -----------------------------------
 client/js/main.js
 const socket = io();
+
+// Enter player name
 document.getElementById('enterNameButton').addEventListener('click', () => {
     const playerName = document.getElementById('playerName').value.trim();
     if (!playerName) return;
     document.getElementById('displayName').innerText = playerName;
     document.getElementById('roomOptions').classList.remove('hidden');
 });
+
+// Create a new room
 document.getElementById('createRoomButton').addEventListener('click', () => {
     const playerName = document.getElementById('playerName').value.trim();
     if (!playerName) return;
     socket.emit('create-room', { playerName });
 });
+
+//join button 
 document.getElementById('joinRoomButton').addEventListener('click', () => {
     document.getElementById('joinRoomForm').classList.remove('hidden');
 });
+
+// Join an existing room
 document.getElementById('joinRoomSubmitButton').addEventListener('click', () => {
     const roomId = document.getElementById('roomId').value.trim();
     const playerName = document.getElementById('playerName').value.trim();
     if (!roomId || !playerName) return;
     socket.emit('join-room', { playerName, roomId });
 });
+
+// Room created handler
 socket.on('room-created', ({ playerName, roomId }) => {
     socket.emit('join-room', { playerName, roomId });
 });
+
+// Room joined handler
 socket.on('room-joined', ({ playerName, roomId }) => {
     window.location.href = `/room?roomId=${roomId}&currentPlayer=${playerName}`;
 });
+
+// Handle errors
 socket.on('error', ({ message }) => {
     alert(message);
 });
 ------------------------------
 client/js/snake-ladder.js
-  const socket = io();
+const socket = io();
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
   const roomId = urlParams.get('roomId');
@@ -369,6 +486,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get('roomId');
 const currentPlayer = urlParams.get('currentPlayer');
 
+// Variable to hold player symbol
+let playerSymbol = '';
+
 socket.emit('update-room',{currentPlayer ,roomId});
 
 socket.on('room-updated', ({ roomData, roomId }) => {
@@ -376,8 +496,8 @@ socket.on('room-updated', ({ roomData, roomId }) => {
   alert('this is called '+roomId+' roomData '+roomData.player1+', '+roomData.player2);
   
   document.getElementById('roomIdDisplay').innerText = roomId;
-  document.getElementById('player1Name').innerText = roomData.player1 ? roomData.player1 : 'Waiting...';
-  document.getElementById('player2Name').innerText = roomData.player2 ? roomData.player2 : 'Waiting for Player 2...';
+  document.getElementById('player1Name').innerText = roomData.player1.name ? roomData.player1.name : 'Waiting...';
+  document.getElementById('player2Name').innerText = roomData.player2.name ? roomData.player2.name : 'Waiting for Player 2...';
   document.getElementById('gameSelected').innerHTML = roomData.selectedGame;
 
   if (roomData.player1 && roomData.player2) {
@@ -400,10 +520,11 @@ document.getElementById('startGameButton').addEventListener('click', () => {
 });
 
 socket.on('game-selection-update', ({ selectedGame }) => {
+  document.getElementById('gameSelect').value = selectedGame ;
   alert(`Game selected: ${selectedGame}`);
 });
 
-socket.on('redirect-to-game', ({ roomId, game }) => {
+socket.on('redirect-to-game', ({ roomId, game, playerSymbol }) => {
   switch (game) {
     case 'Tic-Tac-Toe':
       window.location.href = `/tic-tac-toe?roomId=${roomId}&currentUser=${currentPlayer}`;
@@ -422,6 +543,7 @@ socket.on('redirect-to-game', ({ roomId, game }) => {
   }
 });
 
+
 socket.on('room-full', () => {
   alert('Room is full!');
 });
@@ -433,152 +555,120 @@ socket.on('error', ({ message }) => {
 client/js/tic-tac-toe.js
 const socket = io();
 
-document.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const roomId = urlParams.get('roomId');
-  const currentUser = urlParams.get('currentUser');
-  let playerSymbol = null; // The symbol ('X' or 'O') assigned to the current user
-  let activePlayer = "X"; // The player whose turn it currently is
-  const cells = document.querySelectorAll(".cell");
-  const turnIndicator = document.getElementById("turn-indicator");
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get('roomId');
+const currentUser = urlParams.get('currentUser');
 
-  // Winning combinations (rows, columns, diagonals)
-  const winningCombinations = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-    [0, 4, 8], [2, 4, 6]             // Diagonals
-  ];
-  
-  const board = Array(9).fill(null); // Representing the board
+let playerSymbol = null; // The symbol ('X' or 'O') assigned to the current user
+let activePlayer = "X"; // The player whose turn it currently is
+const cells = document.querySelectorAll(".cell");
+const turnIndicator = document.getElementById("turn-indicator");
 
-  // If mapping is empty, assign "X" to the first player, else assign "O"
-  function assignSymbol(currentUser) {
-    if (Object.keys(playerMapping).length === 0) {
-      playerMapping[currentUser] = "X"; // First player gets "X"
-      playerSymbol = "X";
-    } else {
-      playerMapping[currentUser] = "O"; // Second player gets "O"
-      playerSymbol = "O";
-    }
-    turnIndicator.textContent = `You are Player:${currentUser}: ${playerSymbol}`;
-  }
+// Request the game state when reconnecting
+socket.emit('reconnect-room', { roomId, playerName: currentUser });
 
-  // Request symbol assignment from the client side when the page loads
-  assignSymbol(currentUser);
-
-  // Check if the game is won
-  function checkWinner(player) {
-    return winningCombinations.some(combination =>
-      combination.every(index => board[index] === player)
-    );
-  }
-
-  // Disable all cells
-  function disableBoard() {
-    cells.forEach(cell => cell.removeEventListener("click", handleCellClick));
-  }
-
-  // Enable all empty cells
-  function enableBoard() {
-    cells.forEach(cell => {
-      if (cell.textContent === "") {
-        cell.addEventListener("click", handleCellClick);
-      }
+// Handle receiving the game state after reconnection
+socket.on('reconnected', ({ board, currentPlayer, userSymbol }) => {
+    // Update the board with the current game state
+    cells.forEach((cell, index) => {
+        cell.textContent = board[index] || '';
     });
-  }
+    playerSymbol= userSymbol;
+    activePlayer = currentPlayer;
+    turnIndicator.textContent = `Player ${activePlayer}'s Turn`;
+});
 
-  // cells.forEach((cell) => {
-  //   cell.addEventListener("click", () => {
-  //     if (cell.textContent === "") {
-  //       cell.textContent = activePlayer;
-  //       socket.emit("make-move", { roomId, position: cell.id, player: currentUser });
-  //       activeTurn = activeTurn === "X" ? "O" : "X";
-  //     }
-  //   });
-  // });
+function disableBoard() {
+  cells.forEach( cell => cell.removeEventListener("click", handleCellClick));
+}
 
-  // Handle cell click
-  function handleCellClick(e) {
-    const cell = e.target;
-    const position = parseInt(cell.id); // Cell index
-    alert(activePlayer+' , '+playerSymbol+','+positionc);
-
-    // Only allow move if it's the current player's turn and the cell is empty
-    if (cell.textContent === "" && activePlayer === playerSymbol) {
-      board[position] = playerSymbol;    // Update the board state
-      cell.textContent = playerSymbol;
-
-      socket.emit("make-move", { roomId, position, player: playerSymbol });
-
-      if (checkWinner(playerSymbol)) {
-        socket.emit("tic-tac-toe-winner", { roomId, winner: playerSymbol });
-        disableBoard();
-      } else if (board.every(cell => cell !== null)) {
-        socket.emit("game-draw", { roomId });
-      } else {
-        // Switch to the other player
-        activePlayer = activePlayer === "X" ? "O" : "X";
-        turnIndicator.textContent = `Player ${activePlayer}'s Turn`;
-      }
-    }
-  }
-
-  cells.forEach((cell) => {
+function enableBoard(reset) {
+  cells.forEach( cell => {
+    if(reset=="True"){ cell.textContent = "";}
     cell.addEventListener("click", handleCellClick);
   });
+}
 
-   // Listen for a move from the other player
-  socket.on("move-made", ({ position, player }) => {
-    
-    board[position] = player;
-    document.getElementById(position).textContent = player;
+// Handle cell click
+function handleCellClick(e) {
+  const cell = e.target;
+  const position = parseInt(cell.id); // Get cell index from data attribute
+  socket.emit("make-move", { roomId, position, playerSymbol });
+}
 
-    // Switch turn to the next player
-    activePlayer = player === 'X' ? 'O' : 'X';
-    turnIndicator.textContent = `Player ${activePlayer}'s Turn`;
+cells.forEach((cell) => {
+  cell.addEventListener("click", handleCellClick);
+});
 
-    // Enable/Disable the board based on active player
-    if (activePlayer === playerSymbol) {
-      enableBoard(); // It's the local player's turn
-    } else {
-      disableBoard(); // Disable the board until the opponent moves
-    }
-  });
+document.getElementById('reset-game').addEventListener('click', () => {
+  socket.emit("resetTicTacToe",{ roomId } );
+});
 
-  // Listen for the game winner
-  socket.on("tic-tac-toe-winner", ({ winner }) => {
-    alert(`Player ${winner} wins the game!`);
-    disableBoard();
-  });
+// reset room 
+socket.on('game-reseted',({}) => {
+  document.getElementById('reset-game').classList.add('hidden');
+  enableBoard("True");
+});
 
-  // Handle game draw
-  socket.on("game-draw", () => {
-    alert("The game is a draw!");
-    disableBoard();
-  });
+// Listen for a move from the other player
+socket.on('move-made', ({ position, playerSymbol }) => {
+  document.getElementById(position).textContent = playerSymbol;
 
-  // Listen for room update to assign the symbol to the player
-  // socket.on('room-updated', ({ roomData }) => {
-  //   if (currentUser === roomData.player1) {
-  //     playerSymbol = 'X';
-  //   } else if (currentUser === roomData.player2) {
-  //     playerSymbol = 'O';
-  //   }
-    
-  //   turnIndicator.textContent = `Player ${activePlayer}'s Turn`;
-  //   if (playerSymbol === 'X') {
-  //     enableBoard(); // Player X starts the game
-  //   } else {
-  //     disableBoard(); // Player O waits for Player X to make the first move
-  //   }
-  // });
+  // Switch turn to the next player
+  activePlayer = playerSymbol === 'X' ? 'O' : 'X';
+  turnIndicator.textContent = `Player ${activePlayer}'s Turn`;
+});
 
-  // // Start the game with X
-  // turnIndicator.textContent = `Player ${currentUser}'s Turn`;
-  // enableBoard(); // Enable board for the first player
+// Listen for the game winner
+socket.on("tic-tac-toe-winner", ({ winner }) => {
+  alert(`Player ${winner} wins the game!`);
+  disableBoard();
+  document.getElementById('reset-game').classList.remove('hidden');
+});
+
+// Handle game draw
+socket.on("game-draw", () => {
+  alert("The game is a draw!");
+  disableBoard();
+  document.getElementById('reset-game').classList.remove('hidden');
 });
 -----------------------------------
 client/room.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Multiplayer Game Room">
+  <title>Game Room</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Game Room</h1>
+    <p>Room ID: <span id="roomIdDisplay"></span></p>
+    <div>
+      <p>Player 1: <span id="player1Name">Waiting...</span></p>
+      <p>Player 2: <span id="player2Name">Waiting for Player 2...</span></p>
+      <p>gameSelected: <span id="gameSelected" class="hidden"></span> </p>
+    </div>
+    <div id="gameSelection" class="hidden">
+      <label for="gameSelect">Choose a game:</label>
+      <select id="gameSelect">
+        <option value="Tic-Tac-Toe">Tic-Tac-Toe</option>
+        <option value="Snake and Ladder">Snake and Ladder</option>
+        <option value="Ludo">Ludo</option>
+        <option value="Truth-Dare">Truth-Dare</option>
+      </select>
+      <button id="startGameButton" class="hidden">Start Game</button>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/room.js"></script>
+</body>
+</html>
+-------------------
+client/index.html:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -635,10 +725,6 @@ package.json
   "author": "Your Name",
   "license": "MIT"
 }
------------------------------
-.env
-PORT=3000
-
 --------------------------------
 server/server.js
 const express = require('express');
@@ -646,9 +732,8 @@ const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const path = require('path');
-const { handleSocketConnection } = require('./socket').default; // Import socket handling code
-
-
+// const { handleSocketConnection } = require('./socket').default; // Import socket handling code
+const { handleSocketConnection } = require('./socket');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -660,11 +745,6 @@ const io = socketIo(server, {
 
 app.use(cors());
 
-// Room storage
-let rooms = {};
-
-
-// app.use(express.static('client'));
 app.use(express.static(path.join(__dirname, '/../client'))); // Serving static files from the 'client' folder
 
 // Serve static files
@@ -674,6 +754,22 @@ app.get('/', (req, res) => {
 
 app.get('/room', (req, res) => {
   res.sendFile(path.join(__dirname, '/../client/room.html'));
+});
+
+app.get('/tic-tac-toe', (req, res) => {
+  res.sendFile(path.join(__dirname, '/../client/games/tic-tac-toe.html'));
+});
+
+app.get('/snake-ladder', (req, res) => {
+  res.sendFile(path.join(__dirname, '/../client/games/snake-ladder.html'));
+});
+
+app.get('/ludo', (req, res) => {
+  res.sendFile(path.join(__dirname, '/../client/games/ludo.html'));
+});
+
+app.get('/truth-dare', (req, res) => {
+  res.sendFile(path.join(__dirname, '/../client/games/truth-dare.html'));
 });
 
 // Handle 404 errors
@@ -688,7 +784,6 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
 ------------------------------------
 server/socket.js
 let rooms = {}; // Store rooms by roomId
@@ -697,7 +792,7 @@ function handleSocketConnection(io) {
     io.on('connection', (socket) => {
         
         console.log('A user connected with socket ID:', socket.id);
-
+        // create a room 
         socket.on('create-room', ({ playerName }) => {
             try {
                 const roomId = `room_${Math.floor(Math.random() * 10000)}`;
@@ -711,10 +806,52 @@ function handleSocketConnection(io) {
 
         // Room update 
         socket.on('join-room', ({ playerName, roomId }) => {
-            console.log('join-room '+roomId +' data: '+rooms[roomId].player1 +' , '+rooms[roomId].player2);
-            // rooms[roomId].player2=playerName;
-            
             socket.emit('room-joined', ({ playerName, roomId }));
+        });
+
+        // Handle player reconnection
+        socket.on('reconnect-room', ({ roomId, playerName }) => {
+            const room = rooms[roomId];
+
+            if (room) {
+                // Join the room again
+                socket.join(roomId);
+
+                // Send the current game state to the reconnected player
+                socket.emit('reconnected', {
+                    board: room.ticTacToe.board,
+                    currentPlayer: room.ticTacToe.currentPlayer,
+                    userSymbol: room.player1.name === playerName ? 'X' : 'O'
+                });
+
+                console.log(`${playerName} reconnected to room ${roomId}`);
+            } else {
+                socket.emit('error', { message: 'Room does not exist' });
+            }
+        });
+
+        socket.on('getPlayerSymbol', ({ roomId, currentUser }) => {
+            const room = rooms[roomId];
+            
+            if (!room) {
+                socket.emit('error', { message: 'Room does not exist' });
+                return;
+            }
+        
+            let playerSymbol = null;
+            // socket.join(roomId);
+        
+            if (room.player1 && room.player1.name === currentUser) {
+                playerSymbol = room.player1.Symbol;  // Corrected the casing of "symbol"
+            } else if (room.player2 && room.player2.name === currentUser) {
+                playerSymbol = room.player2.Symbol;  // Corrected the casing of "symbol"
+            }
+            if (playerSymbol) {
+                // Emit the symbol back to the client
+                socket.emit('playerSymbol', { symbol: playerSymbol });
+            } else {
+                socket.emit('error', { message: 'Player not found in room' });
+            }
         });
 
         socket.on('update-room', ({ currentPlayer, roomId }) => {
@@ -724,16 +861,16 @@ function handleSocketConnection(io) {
                 if (rooms[roomId]) {
                     // Check if there is space in the room (only 2 players)
                     if (!rooms[roomId].player1) {
-                        rooms[roomId].player1 = currentPlayer;
+                        rooms[roomId].player1 = {name: currentPlayer, Symbol:'X'};
                         socket.join(roomId);
                     } else if (!rooms[roomId].player2) {
-                        rooms[roomId].player2 = currentPlayer;
+                        rooms[roomId].player2 = {name: currentPlayer, Symbol:'O'};
                         socket.join(roomId);
                     } else if(currentPlayer !== roomData.player1 || currentPlayer !==roomData.player2 ) {
                         socket.emit('room-full');
                     }
                     // Notify the room of the update
-                    io.to(roomId).emit('room-updated', { roomData: rooms[roomId], roomId:roomId });
+                    io.to(roomId).emit('room-updated', { roomData: rooms[roomId], roomId: roomId });
                 } else {
                     socket.emit('error', { message: 'Room does not exist' });
                 }
@@ -766,28 +903,25 @@ function handleSocketConnection(io) {
         });
 
         // Tic-Tac-Toe move handler
-        socket.on('make-move', ({ roomId, position, player }) => {
-            console.log(`roomId: ${roomId} , position: ${position} , player: ${player}`);
-            const room = rooms[roomId];
-            if (!room || room.selectedGame !== 'tic-tac-toe') return;
+        socket.on('make-move', ({ roomId, position, playerSymbol }) => {
+            let room = rooms[roomId];
+            if (!room || room.selectedGame !== 'Tic-Tac-Toe') return;
 
-            const { board, currentPlayer } = room.ticTacToe;
+            let { board, currentPlayer } = room.ticTacToe;
+            console.log(`currentPlayer: ${currentPlayer} , playerSymbol: ${playerSymbol} board: ${board}`);
 
             // Check if it's the current player's turn and if the cell is empty
-            if (currentPlayer === player && board[position] === null) {
-                board[position] = player; // Update the board
-                room.ticTacToe.currentPlayer = player === 'X' ? 'O' : 'X'; // Switch turn
-
-                io.in(roomId).emit('move-made', { position, player });
-
+            if (currentPlayer === playerSymbol && board[position] === null) {
+                board[position] = playerSymbol; // Update the board
+                room.ticTacToe.currentPlayer = playerSymbol === 'X' ? 'O' : 'X'; // Switch turn
+                
+                io.to(roomId).emit('move-made', { position: position, playerSymbol: playerSymbol });
                 // Check for winner or draw
-                const winner = checkWinner(board);
+                const winner = checkWinner(board, roomId);
                 if (winner) {
                     io.in(roomId).emit('tic-tac-toe-winner', { winner });
-                    resetTicTacToe(roomId); // Reset game state after a win
                 } else if (board.every(cell => cell !== null)) {
                     io.in(roomId).emit('game-draw');
-                    resetTicTacToe(roomId); // Reset game state after a draw
                 }
             }
         });
@@ -796,11 +930,21 @@ function handleSocketConnection(io) {
             console.log(`Player disconnected`, socket.id);
                    
         });
+
+        // Helper function to reset Tic-Tac-Toe game state
+        socket.on('resetTicTacToe', ({ roomId }) => {
+            if (rooms[roomId]) {
+                rooms[roomId].ticTacToe.board = Array(9).fill(null);
+                // Notify the game reseted
+                io.to(roomId).emit('game-reseted', {});
+            }
+        });
+        
     });
 }
 
 // Helper function to check for a Tic-Tac-Toe winner
-function checkWinner(board) {
+function checkWinner(board, roomId) {
     const winPatterns = [
         [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
         [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
@@ -809,18 +953,19 @@ function checkWinner(board) {
 
     for (const pattern of winPatterns) {
         const [a, b, c] = pattern;
+        // console.log(board[a]+','+board[b]+','+board[c]);
         if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-            return board[a]; // Return the winner ('X' or 'O')
+            let winner=null;
+            if(rooms[roomId].player1.Symbol === board[a]) {
+                winner = rooms[roomId].player1.name;
+            }else{
+                winner = rooms[roomId].player2.name;
+            }
+            return winner; // Return the winner ('X' or 'O')
         }
     }
     return null; // No winner yet
 }
 
-// Helper function to reset Tic-Tac-Toe game state
-function resetTicTacToe(roomId) {
-    if (rooms[roomId]) {
-        rooms[roomId].ticTacToe.board = Array(9).fill(null);
-        rooms[roomId].ticTacToe.currentPlayer = 'X';
-    }
-}
-export default { handleSocketConnection };
+// export default { handleSocketConnection };
+module.exports = { handleSocketConnection };
