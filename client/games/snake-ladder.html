@@ -5,25 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Multiplayer Snake and Ladder Game">
   <title>Snake and Ladder</title>
-  <link rel="stylesheet" href="../css/game.css">
+  <link rel="stylesheet" href="../css/snake.css">
 </head>
 <body>
   <h1>Snake and Ladder Game</h1>
 
+  <!-- Snake and Ladder game board -->
+  <div class="box" id="cell-0" class="Player-X"></div>
   <div id="game-board">
-    <table>
-      <!-- 10x10 Snake and Ladder board will be generated dynamically -->
-      <tbody id="board"></tbody>
-    </table>
     <div id="board-overlay"></div>
   </div>
 
-  <div id="game-controls">
-    <button id="roll-dice">Roll Dice</button>
+  <div id="dice-container">
+    <img id="dice-image" src="/images/dice/dice-6.jpg" alt="Dice">
     <p id="dice-result">Dice: <span id="dice-value">0</span></p>
+  </div>
+  
+  <div id="game-controls">
     <p id="turn-indicator">Player 1's Turn</p>
+    <div id="reset-game" class="hidden"><button>Play Again</button></div>
   </div>
 
+  <!-- Scripts for socket.io and game logic -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="../js/snake-ladder.js"></script>
 </body>

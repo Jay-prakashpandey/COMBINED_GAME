@@ -10,7 +10,7 @@ const cells = document.querySelectorAll(".cell");
 const turnIndicator = document.getElementById("turn-indicator");
 
 // Request the game state when reconnecting
-socket.emit('reconnect-room', { roomId, playerName: currentUser });
+socket.emit('reconnect-room', { roomId, playerName: currentUser, gameSelected: 'ticTacToe' });
 
 // Handle receiving the game state after reconnection
 socket.on('reconnected', ({ board, currentPlayer, userSymbol }) => {
@@ -50,7 +50,7 @@ document.getElementById('reset-game').addEventListener('click', () => {
 });
 
 // reset room 
-socket.on('game-reseted',({}) => {
+socket.on('game-reseted',({board}) => {
   document.getElementById('reset-game').classList.add('hidden');
   enableBoard("True");
 });

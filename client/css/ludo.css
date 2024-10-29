@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f4f4;
+  }
+  
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  #game-info {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  #game-board {
+    display: inline-block;
+    position: relative;
+    margin: 20px auto;
+    width: 100%; /* Responsive width */
+    max-width: 600px; /* Maximum width to prevent excessive scaling */
+    aspect-ratio: 1 / 1; /* Maintain a 1:1 aspect ratio */
+    /* width: 400px; */
+    /* height: 400px; */
+    background-color: lightyellow;
+    border: 1px solid #000;
+    /* position: relative; */
+  }
+  
+  .piece {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    position: absolute;
+  }
+  
+  .player-X {
+    background-color: red;
+  }
+  
+  .player-O {
+    background-color: blue;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
