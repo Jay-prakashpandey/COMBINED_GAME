@@ -102,18 +102,22 @@ function handleSocketConnection(io) {
             const currentPlayerName = rooms[roomId][currentPlayer === 'X' ? 'player1' : 'player2'].name;
             
             let newPosition = board[currentPlayer] + diceValue;
-            
+            console.log(`newPosition: ${newPosition}`);
             // Check for snake or ladder
-            if (newPosition in snakes) newPosition = snakes[newPosition];
-            if (newPosition in ladders) newPosition = ladders[newPosition];
-
+            if(diceValue !== 6){
+                if (newPosition in snakes) newPosition = snakes[newPosition];
+                if (newPosition in ladders) newPosition = ladders[newPosition];
+            }
             // Update position or declare winner if position is 100
-            if (newPosition <= 100) board[currentPlayer] = board[currentPlayer] ===0 ? (diceValue < 6 ? 0 : newPosition-6) : newPosition;
+            if (newPosition <= 100) board[currentPlayer] = board[currentPlayer] ===0 ? (diceValue < 6 ? 0 : newPosition) : newPosition;
             if (newPosition === 100) {
                 io.to(roomId).emit('snake-ladder-winner', { winner: currentPlayerName });
             } else {
-                rooms[roomId].currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch turn
-                io.to(roomId).emit('snake-ladder-updated', { board, currentPlayer: rooms[roomId].currentPlayer });
+                if (diceValue !== 6){
+                    rooms[roomId].currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch turn
+                }
+                console.log(`board-x: ${board.X}, ${board.O} `);
+                io.to(roomId).emit('snake-ladder-updated', { board: board, currentPlayer: rooms[roomId].currentPlayer, currentPlayerName: currentPlayerName, diceRoll: diceValue});
             }
         });
 

@@ -52,13 +52,11 @@ h1 {
 
 /* Player colors */
 .player-X {
-    background-color: red; /* Emoji for player X */
-    
+    background-color: red; /* Emoji for player X */ 
 }
 
 .player-O {
-    background-color: blue; /* Emoji for player O */
-    
+    background-color: blue; /* Emoji for player O */ 
 }
 
 /* Dice and controls */

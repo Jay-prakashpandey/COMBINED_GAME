@@ -6,7 +6,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get('roomId');
 const currentUser = urlParams.get('currentUser');
 
-let sum = 0 ;
 let playerSymbol = null; // The symbol ('X' or 'O') assigned to the current user
 let activePlayer = "X"; // The player whose turn it currently is
 
@@ -26,7 +25,7 @@ function createBoard(board, index){
     cell.textContent = s;
     cell.classList.add(`player-${s}`);
   } else {
-    cell.textContent = index;
+    cell.textContent = '';
   }
   gameBoard.appendChild(cell);
 
@@ -46,6 +45,14 @@ function updatePlayerPosition(board){
   } 
 }
 
+function toggleDice(){
+  if (activePlayer !== playerSymbol) {
+    rollDiceButton.removeEventListener("click", handleDiceRoll);
+  }else{
+    rollDiceButton.addEventListener("click", handleDiceRoll);
+  }
+}
+
 // Handle receiving the game state after reconnection
 socket.on('reconnected', ({ board, currentPlayer, userSymbol }) => {
     // Update the board with the current game state
@@ -54,14 +61,11 @@ socket.on('reconnected', ({ board, currentPlayer, userSymbol }) => {
     playerSymbol= userSymbol;
     activePlayer = currentPlayer;
     turnIndicator.textContent = `Player ${activePlayer}'s Turn`;
+    toggleDice();
 });
 
-// Roll the dice
-rollDiceButton.addEventListener("click", () => {
-  if (activePlayer !== playerSymbol) {
-    alert("It's not your turn!");
-    return;
-  }
+// Separate function to handle dice roll
+function handleDiceRoll()  {
   rollingSound.play();
   // Start rolling animation
   rollDiceButton.src = '/images/tenor.gif';
@@ -69,22 +73,18 @@ rollDiceButton.addEventListener("click", () => {
   setTimeout(() => {
     const diceRoll = Math.floor(Math.random() * 6) + 1;
     diceValueDisplay.textContent = `You rolled: ${diceRoll}`;
-    rollDiceButton.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
-    if(diceRoll !== 6){
-      sum += diceRoll ;
-      socket.emit("roll-dice-snake", { roomId, currentPlayer: activePlayer, diceValue: sum });
-      sum=0;
-    }else{
-      sum=6;
-    }
+    // rollDiceButton.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
+    socket.emit("roll-dice-snake", { roomId, currentPlayer: activePlayer, diceValue: diceRoll });
+    
   }, 1000);
 
-});
+}
 
-socket.on( "snake-ladder-updated", ({board, currentPlayer, currentPlayerName}) => {
-    updatePlayerPosition(board);
+socket.on( "snake-ladder-updated", ({board, currentPlayer, currentPlayerName, diceRoll}) => {
     activePlayer = currentPlayer;
     turnIndicator.textContent = ` ${currentPlayerName}'s Turn`; 
+    rollDiceButton.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
+    updatePlayerPosition(board);
     toggleDice();
   });
 
@@ -96,7 +96,7 @@ socket.on("snake-ladder-winner", ({ winner }) => {
 });
 
 document.getElementById('reset-game').addEventListener('click', () => {
-  socket.emit("resetTicTacToe",{ roomId } );
+  socket.emit("reset-game",{ roomId } );
 });
 
 // reset room 

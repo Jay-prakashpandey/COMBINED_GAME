@@ -46,7 +46,7 @@ cells.forEach((cell) => {
 });
 
 document.getElementById('reset-game').addEventListener('click', () => {
-  socket.emit("resetTicTacToe",{ roomId } );
+  socket.emit("reset-game",{ roomId } );
 });
 
 // reset room 
