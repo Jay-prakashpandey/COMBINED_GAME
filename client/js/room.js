@@ -11,7 +11,7 @@ socket.emit('update-room',{currentPlayer ,roomId});
 
 socket.on('room-updated', ({ roomData, roomId }) => {
   
-  alert('this is called '+roomId+' roomData '+roomData.player1+', '+roomData.player2);
+  // alert('this is called '+roomId+' roomData '+roomData.player1+', '+roomData.player2);
   
   document.getElementById('roomIdDisplay').innerText = roomId;
   document.getElementById('player1Name').innerText = roomData.player1.name ? roomData.player1.name : 'Waiting...';
@@ -39,7 +39,7 @@ document.getElementById('startGameButton').addEventListener('click', () => {
 
 socket.on('game-selection-update', ({ selectedGame }) => {
   document.getElementById('gameSelect').value = selectedGame ;
-  alert(`Game selected: ${selectedGame}`);
+  // alert(`Game selected: ${selectedGame}`);
 });
 
 socket.on('redirect-to-game', ({ roomId, game, playerSymbol }) => {

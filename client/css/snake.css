@@ -50,13 +50,59 @@ h1 {
     z-index: 0;
 }
 
+#back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 8px 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 /* Player colors */
 .player-X {
-    background-color: red; /* Emoji for player X */ 
+    /* background-color: red; Emoji for player X  */
+    width: 30px;
+    height: 60px;
+    background: linear-gradient(to bottom, red, darkred);
+    border-radius: 50% 50% 0 0;
+    position: relative;
+}
+
+.player-X::before {
+    content: "";
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background-color: #FF4D4D;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .player-O {
-    background-color: blue; /* Emoji for player O */ 
+    /* background-color: blue; Emoji for player O  */
+    width: 30px;
+    height: 60px;
+    background: linear-gradient(to bottom, blue, darkblue);
+    border-radius: 50% 50% 0 0;
+    position: relative;
+    transform: translate(5px, -5px);
+}
+
+.player-O::before {
+    content: "";
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background-color: #4D4DFF;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Dice and controls */

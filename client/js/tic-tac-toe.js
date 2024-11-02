@@ -9,6 +9,10 @@ let activePlayer = "X"; // The player whose turn it currently is
 const cells = document.querySelectorAll(".cell");
 const turnIndicator = document.getElementById("turn-indicator");
 
+const backButton = document.getElementById('Go-Back');
+
+
+
 // Request the game state when reconnecting
 socket.emit('reconnect-room', { roomId, playerName: currentUser, gameSelected: 'ticTacToe' });
 
@@ -49,6 +53,11 @@ document.getElementById('reset-game').addEventListener('click', () => {
   socket.emit("reset-game",{ roomId } );
 });
 
+backButton.addEventListener('click', () => {
+  // If you want to go to a specific URL, use window.location.href
+  socket.emit('back-click', {roomId});
+});
+
 // reset room 
 socket.on('game-reseted',({board}) => {
   document.getElementById('reset-game').classList.add('hidden');
@@ -76,4 +85,8 @@ socket.on("game-draw", () => {
   alert("The game is a draw!");
   disableBoard();
   document.getElementById('reset-game').classList.remove('hidden');
+});
+
+socket.on('back-clicked', ({}) => {
+  window.location.href = `/room?roomId=${roomId}&currentPlayer=${currentUser}`;
 });

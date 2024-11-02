@@ -10,12 +10,14 @@ const winPatterns = [
 function handleSocketConnection(io) {
     io.on('connection', (socket) => {
         
-        console.log('A user connected with socket ID:', socket.id);
+        // console.log('A user connected with socket ID:', socket.id);
         // create a room 
         socket.on('create-room', ({ playerName }) => {
             try {
                 const roomId = Math.floor(Math.random() * 10000);
-                rooms[roomId] = { player1: null, player2: null, selectedGame: null, currentPlayer: 'X', 
+                rooms[roomId] = { 
+                    player1: null, player2: null, 
+                    selectedGame: null, currentPlayer: 'X', 
                     ticTacToe: { board: Array(9).fill(null)},
                     ludo: {board:Array(57).fill(null)},
                     snake_ladder: {board: {X: 0, O: 0}}
@@ -48,25 +50,27 @@ function handleSocketConnection(io) {
                     userSymbol: room.player1.name === playerName ? 'X' : 'O'
                 });
 
-                console.log(`${playerName} reconnected to room ${roomId}`);
+                // console.log(`${playerName} reconnected to room ${roomId}`);
             } else {
                 socket.emit('error', { message: 'Room does not exist' });
             }
         });
 
         socket.on('update-room', ({ currentPlayer, roomId }) => {
-            console.log('room '+ roomId + ' joined by: '+currentPlayer );
+            // console.log('room '+ roomId + ' joined by: '+currentPlayer );
             try {
                 const roomData = rooms[roomId];
                 if (rooms[roomId]) {
                     // Check if there is space in the room (only 2 players)
                     if (!rooms[roomId].player1) {
-                        rooms[roomId].player1 = {name: currentPlayer, Symbol:'X'};
+                        rooms[roomId].player1 = {name: currentPlayer, Symbol:'X', totalWin: 0};
                         socket.join(roomId);
                     } else if (!rooms[roomId].player2) {
-                        rooms[roomId].player2 = {name: currentPlayer, Symbol:'O'};
+                        rooms[roomId].player2 = {name: currentPlayer, Symbol:'O', totalWin: 0};
                         socket.join(roomId);
-                    } else if(currentPlayer !== roomData.player1 || currentPlayer !==roomData.player2 ) {
+                    } else if(currentPlayer === roomData.player1.name || currentPlayer ===roomData.player2.name ){
+                        socket.join(roomId);
+                    } else{
                         socket.emit('room-full');
                     }
                     // Notify the room of the update
@@ -82,9 +86,10 @@ function handleSocketConnection(io) {
 
         socket.on('game-selected', ({ roomId, game }) => {
             if (rooms[roomId]) {
+                // update gameSelected 
                 rooms[roomId].selectedGame = game;
+                // call to update selected game in UI
                 io.in(roomId).emit('game-selection-update', { selectedGame: game });
-                
                 // Redirect both players to the selected game page
                 io.in(roomId).emit('redirect-to-game', { roomId, game });
             }
@@ -99,10 +104,10 @@ function handleSocketConnection(io) {
 
         socket.on('roll-dice-snake', ({roomId, currentPlayer, diceValue }) => {
             const board = rooms[roomId].snake_ladder.board;
-            const currentPlayerName = rooms[roomId][currentPlayer === 'X' ? 'player1' : 'player2'].name;
+            const currentPlayerName = rooms[roomId][currentPlayer === 'X' ? 'player2' : 'player1'].name;
             
             let newPosition = board[currentPlayer] + diceValue;
-            console.log(`newPosition: ${newPosition}`);
+            // console.log(`newPosition: ${newPosition}`);
             // Check for snake or ladder
             if(diceValue !== 6){
                 if (newPosition in snakes) newPosition = snakes[newPosition];
@@ -116,7 +121,7 @@ function handleSocketConnection(io) {
                 if (diceValue !== 6){
                     rooms[roomId].currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch turn
                 }
-                console.log(`board-x: ${board.X}, ${board.O} `);
+                // console.log(`board-x: ${board.X}, ${board.O} `);
                 io.to(roomId).emit('snake-ladder-updated', { board: board, currentPlayer: rooms[roomId].currentPlayer, currentPlayerName: currentPlayerName, diceRoll: diceValue});
             }
         });
@@ -138,7 +143,7 @@ function handleSocketConnection(io) {
 
             let board = room.ticTacToe.board;
             let currentPlayer = room.currentPlayer ;
-            console.log(`currentPlayer: ${currentPlayer} , playerSymbol: ${playerSymbol} board: ${board}`);
+            // console.log(`currentPlayer: ${currentPlayer} , playerSymbol: ${playerSymbol} board: ${board}`);
 
             // Check if it's the current player's turn and if the cell is empty
             if (currentPlayer === playerSymbol && board[position] === null) {
@@ -157,8 +162,7 @@ function handleSocketConnection(io) {
         });
 
         socket.on('disconnect', () => {
-            console.log(`Player disconnected`, socket.id);
-                   
+            console.log(`Player disconnected`, socket.id);      
         });
 
         // Helper function to reset Tic-Tac-Toe game state
@@ -171,6 +175,10 @@ function handleSocketConnection(io) {
             }
         });
         
+        // back button if clicked 
+        socket.on('back-click',({roomId}) => {
+            io.to(roomId).emit('back-clicked', {});
+        });
     });
 }
 

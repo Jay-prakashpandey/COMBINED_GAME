@@ -13,20 +13,38 @@ const gameBoard = document.getElementById("game-board");
 const turnIndicator = document.getElementById("turn-indicator");
 const diceValueDisplay = document.getElementById("dice-value");
 const rollDiceButton = document.getElementById('dice-image');
+
 // Request the game state when reconnecting
 socket.emit('reconnect-room', { roomId, playerName: currentUser , gameSelected: 'snake_ladder'});
+
+const backButton = document.getElementById('Go-Back');
+
+backButton.addEventListener('click', () => {
+  // If you want to go to a specific URL, use window.location.href
+  socket.emit('back-click', {roomId});
+});
+
+
 
 function createBoard(board, index){
   const cell = document.createElement("div");
   cell.classList.add("box");
   cell.id = `cell-${index}`;
-  if (index === board['X'] || index === board['O']) {
-    const s = board['X'] === index ? 'X' : 'O';
-    cell.textContent = s;
-    cell.classList.add(`player-${s}`);
+  
+  if ( index === 1 || index === board['X'] || index === board['O'] ) {
+    // const s = board['X'] === index ? 'X' : 'O';
+    // cell.textContent = s;
+    // cell.classList.add(`player-${s}`);
+    if(board['X'] ===0 || board['X'] === index){
+      cell.classList.add(`player-X`);
+    }  
+    if(board['O'] ===0 || board['O'] === index){
+      cell.classList.add(`player-O`);
+    }
   } else {
     cell.textContent = '';
   }
+
   gameBoard.appendChild(cell);
 
 }
@@ -73,9 +91,8 @@ function handleDiceRoll()  {
   setTimeout(() => {
     const diceRoll = Math.floor(Math.random() * 6) + 1;
     diceValueDisplay.textContent = `You rolled: ${diceRoll}`;
-    // rollDiceButton.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
+    rollDiceButton.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
     socket.emit("roll-dice-snake", { roomId, currentPlayer: activePlayer, diceValue: diceRoll });
-    
   }, 1000);
 
 }
@@ -105,3 +122,6 @@ socket.on('game-reseted',({board}) => {
   updatePlayerPosition(board);
 });
 
+socket.on('back-clicked', ({}) => {
+  window.location.href = `/room?roomId=${roomId}&currentPlayer=${currentUser}`;
+});
