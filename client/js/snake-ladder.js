@@ -99,7 +99,9 @@ function handleDiceRoll()  {
 
 socket.on( "snake-ladder-updated", ({board, currentPlayer, currentPlayerName, diceRoll}) => {
     activePlayer = currentPlayer;
-    turnIndicator.textContent = ` ${currentPlayerName}'s Turn`; 
+    if(diceRoll !== 6){
+      turnIndicator.textContent = ` ${currentPlayerName}'s Turn`; 
+    }
     rollDiceButton.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
     updatePlayerPosition(board);
     toggleDice();

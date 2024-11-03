@@ -62,47 +62,50 @@ h1 {
 /* Player colors */
 .player-X {
     /* background-color: red; Emoji for player X  */
-    width: 30px;
-    height: 60px;
+    width: 20px;
+    height: 30px;
     background: linear-gradient(to bottom, red, darkred);
     border-radius: 50% 50% 0 0;
     position: relative;
+    bottom: -40%;
 }
+    
 
 .player-X::before {
     content: "";
     position: absolute;
-    top: -15px;
     left: 50%;
     transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     background-color: #FF4D4D;
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    top: -15px;
 }
 
 .player-O {
     /* background-color: blue; Emoji for player O  */
-    width: 30px;
-    height: 60px;
+    width: 20px;
+    height: 30px;
     background: linear-gradient(to bottom, blue, darkblue);
     border-radius: 50% 50% 0 0;
     position: relative;
     transform: translate(5px, -5px);
+    bottom: -40%;
 }
 
 .player-O::before {
     content: "";
     position: absolute;
-    top: -15px;
     left: 50%;
     transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     background-color: #4D4DFF;
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    top: -15px;
 }
 
 /* Dice and controls */

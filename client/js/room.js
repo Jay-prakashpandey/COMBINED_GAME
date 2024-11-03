@@ -51,9 +51,11 @@ socket.on('redirect-to-game', ({ roomId, game, playerSymbol }) => {
       window.location.href = `/snake-ladder?roomId=${roomId}&currentUser=${currentPlayer}`;
       break;
     case 'Ludo':
+      alert("this is yet no updated");
       window.location.href = `/ludo?roomId=${roomId}&currentUser=${currentPlayer}`;
       break;
     case 'Truth-Dare':
+      alert("this is not updated yet");
       window.location.href = `/truth-dare?roomId=${roomId}&currentUser=${currentPlayer}`;
       break;
     default:
