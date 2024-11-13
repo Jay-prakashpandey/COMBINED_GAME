@@ -1,4 +1,3 @@
-// window.onload = () => {
 const socket = io();
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get('roomId');
@@ -7,69 +6,52 @@ const currentPlayer = urlParams.get('currentPlayer');
 // Variable to hold player symbol
 let playerSymbol = '';
 
+function updateRoomDisplay(roomData) {
+  document.getElementById('roomIdDisplay').innerText = roomId;
+  document.getElementById('player1Name').innerText = roomData.player1?.name || 'Waiting...';
+  document.getElementById('player2Name').innerText = roomData.player2?.name || 'Waiting for Player 2...';
+  document.getElementById('gameSelected').innerText = roomData.selectedGame || '';
+}
+
+function toggleGameSelection(visible) {
+  const action = visible ? 'remove' : 'add';
+  document.getElementById('gameSelected').classList[action]('hidden');
+  document.getElementById('gameSelection').classList[action]('hidden');
+  document.getElementById('startGameButton').classList[action]('hidden');
+}
+
+
 socket.emit('update-room',{currentPlayer ,roomId});
 
-socket.on('room-updated', ({ roomData, roomId }) => {
-  
-  // alert('this is called '+roomId+' roomData '+roomData.player1+', '+roomData.player2);
-  
-  document.getElementById('roomIdDisplay').innerText = roomId;
-  document.getElementById('player1Name').innerText = roomData.player1.name ? roomData.player1.name : 'Waiting...';
-  document.getElementById('player2Name').innerText = roomData.player2.name ? roomData.player2.name : 'Waiting for Player 2...';
-  document.getElementById('gameSelected').innerHTML = roomData.selectedGame;
-
-  if (roomData.player1 && roomData.player2) {
-    document.getElementById('gameSelected').classList.remove('hidden');
-    document.getElementById('gameSelection').classList.remove('hidden');
-    document.getElementById('startGameButton').classList.remove('hidden');
-  } else {
-    document.getElementById('gameSelect').classList.add('hidden');
-    document.getElementById('startGameButton').classList.add('hidden');
-  }
+socket.on('room-updated', ({ roomData}) => {
+  updateRoomDisplay(roomData);
+  toggleGameSelection(roomData.player1 && roomData.player2);
 });
 
 document.getElementById('startGameButton').addEventListener('click', () => {
   const selectedGame = document.getElementById('gameSelect').value;
-  if (selectedGame) {
-    socket.emit('game-selected', { roomId, game: selectedGame });
-  } else {
-    alert('Please select a game first!');
-  }
+  selectedGame
+      ? socket.emit('game-selected', { roomId, game: selectedGame })
+      : alert('Please select a game first!');
 });
 
 socket.on('game-selection-update', ({ selectedGame }) => {
   document.getElementById('gameSelect').value = selectedGame ;
-  // alert(`Game selected: ${selectedGame}`);
 });
 
-socket.on('redirect-to-game', ({ roomId, game, playerSymbol }) => {
-  switch (game) {
-    case 'Tic-Tac-Toe':
-      window.location.href = `/tic-tac-toe?roomId=${roomId}&currentUser=${currentPlayer}`;
-      break;
-    case 'Snake and Ladder':
-      window.location.href = `/snake-ladder?roomId=${roomId}&currentUser=${currentPlayer}`;
-      break;
-    case 'Ludo':
-      alert("this is yet no updated");
-      window.location.href = `/ludo?roomId=${roomId}&currentUser=${currentPlayer}`;
-      break;
-    case 'Truth-Dare':
-      alert("this is not updated yet");
-      window.location.href = `/truth-dare?roomId=${roomId}&currentUser=${currentPlayer}`;
-      break;
-    default:
+socket.on('redirect-to-game', ({ roomId, game }) => {
+  const gameRoutes = {
+      'Tic-Tac-Toe': `/tic-tac-toe`,
+      'Snake and Ladder': `/snake-ladder`,
+      'Ludo': `/ludo`,
+      'Truth-Dare': `/truth-dare`
+  };
+  if (gameRoutes[game]) {
+      window.location.href = `${gameRoutes[game]}?roomId=${roomId}&currentUser=${currentPlayer}`;
+  } else {
       alert('Invalid game selection');
   }
 });
 
-
-socket.on('room-full', () => {
-  alert('Room is full!');
-});
-
-socket.on('error', ({ message }) => {
-  alert(message);
-});
-
-// };
+socket.on('room-full', () => alert('Room is full!'));
+socket.on('error', ({ message }) => alert(message));

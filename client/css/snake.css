@@ -50,13 +50,40 @@ h1 {
     z-index: 0;
 }
 
-#back-button {
+.back-button {
     position: absolute;
     top: 10px;
-    left: 10px;
-    padding: 8px 12px;
-    font-size: 16px;
+    left: 20px;
+}
+
+.reset-button{
+    background-color: red;
+    margin: 10px;
+}
+
+#Go-Back {
+    background-color: red;
     cursor: pointer;
+}
+
+#playerX {
+    position: absolute;
+    right: 50px;
+    top: 90px;
+    background-color: #ed6a6a;
+    width: auto;
+    height: auto;
+    font-size: larger;
+}
+
+#playerO {
+    position: absolute;
+    left: 50px;
+    bottom: -60px;
+    background-color: rgb(89, 89, 242);
+    width: auto;
+    height: auto;
+    font-size: larger;
 }
 
 /* Player colors */
@@ -70,7 +97,6 @@ h1 {
     bottom: -40%;
 }
     
-
 .player-X::before {
     content: "";
     position: absolute;
@@ -92,13 +118,13 @@ h1 {
     border-radius: 50% 50% 0 0;
     position: relative;
     transform: translate(5px, -5px);
-    bottom: -40%;
+    bottom: -15%;
 }
 
 .player-O::before {
     content: "";
     position: absolute;
-    left: 50%;
+    right: 50%;
     transform: translateX(-50%);
     width: 20px;
     height: 20px;
@@ -108,25 +134,10 @@ h1 {
     top: -15px;
 }
 
-/* Dice and controls */
-#dice-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-#dice-image {
+.dice-image {
     width: 60px;
     cursor: pointer;
     transition: transform 0.3s;
-}
-
-#dice-result {
-    margin-top: 10px;
-    font-size: 18px;
-    font-weight: bold;
 }
 
 /* Mobile responsiveness */

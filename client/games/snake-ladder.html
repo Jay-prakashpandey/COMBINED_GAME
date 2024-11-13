@@ -8,21 +8,31 @@
   <link rel="stylesheet" href="../css/snake.css">
 </head>
 <body>
+
+  <div class="back-button">
+    <button id="Go-Back">← Go Back</button>
+  </div>
   <h1>Snake and Ladder Game</h1>
-  <button id="Go-Back" > Go-Back </button>
+  <div class="player" id="playerX">Player X</div>
+  <img id="dice-imageX" class="dice-image" src="/images/dice/dice-6.jpg" alt="Dice">
+  
   <!-- Snake and Ladder game board -->
   <div id="game-board">
     <div id="board-overlay"></div>
   </div>
-  <div id="dice-container">
-    <img id="dice-image" src="/images/dice/dice-6.jpg" alt="Dice">
-    <p id="dice-result">Dice: <span id="dice-value">0</span></p>
-  </div>
+  <div class="player" id="playerO">Player O</div>
+  <img id="dice-imageO" class="dice-image" src="/images/dice/dice-6.jpg" alt="Dice">
+  <button id="resetButton" class="reset-button">@Play Again</button>
+  <!-- <div id="dice-container"> -->
+    <!-- <img id="dice-image" src="/images/dice/dice-6.jpg" alt="Dice"> -->
+    <!-- <p id="dice-result">Dice: <span id="dice-value">0</span></p> -->
+  <!-- </div> -->
   
-  <div id="game-controls">
+  <!-- <div id="game-controls">
     <p id="turn-indicator">Player 1's Turn</p>
+    <div id="dice-result">Dice: <span id="dice-value">0</span></div>
     <div id="reset-game" class="hidden"><button>Play Again</button></div>
-  </div>
+  </div> -->
 
   <!-- Scripts for socket.io and game logic -->
   <script src="/socket.io/socket.io.js"></script>
