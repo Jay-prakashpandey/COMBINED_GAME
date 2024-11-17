@@ -50,14 +50,6 @@ body {
   .hidden {
     display: none;
   }
-  /* td {
-    border: 1px solid #ddd;
-    width: 33%;
-    height: 33%;
-    font-size: 40px;
-    text-align: center;
-    vertical-align: middle;
-  } */
   
   #game-controls {
     margin-top: 20px;
@@ -88,16 +80,22 @@ body {
     margin-top: 10px;
     font-size: 18px;
   }
-  
-  /* .cell {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2em;
-    border: 1px solid #000;
-  } */
+
+  #Go-Back {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: red;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+#Go-Back:hover {
+    background-color: #ff595e;
+}
 
 @media (max-width: 600px) {
   td {

@@ -17,20 +17,27 @@ function handleSocketConnection(io) {
         socket.on('game-selected', ({ roomId, game }) => selectGame(io, roomId, game));
         socket.on('roll-dice-snake', data => rollDiceSnake(io, data));
         socket.on('make-move', data => makeTicTacToeMove(io, data));
+        socket.on('make-move-connect4', data => makeConnect4Move(io, data));
         socket.on('reset-game', ({ roomId }) => resetGame(io, roomId));
         socket.on('back-click', ({ roomId }) => io.to(roomId).emit('back-clicked'));
         socket.on('disconnect', () => console.log(`Player disconnected`, socket.id));
     });
 }
+
+// Helper functions for Connect-4
+function createConnect4Board() {
+    return Array(6).fill().map(() => Array(7).fill(null)); // 6 rows x 7 columns
+}
         
-        // console.log('A user connected with socket ID:', socket.id);
-        // create a room 
+// console.log('A user connected with socket ID:', socket.id);
+// create a room 
 function createRoom(socket, playerName){
     try {
         const roomId = Math.floor(Math.random() * 10000);
         rooms[roomId] = { 
             player1: null, player2: null, 
             selectedGame: null, currentPlayer: 'X', 
+            connect4: { board: createConnect4Board()}, // 6 rows x 7 columns
             ticTacToe: { board: Array(9).fill(null)},
             ludo: {board:Array(57).fill(null)},
             snake_ladder: {board: {X: 0, O: 0}}
@@ -87,36 +94,11 @@ function rollDiceSnake(io, { roomId, currentPlayer, diceValue }) {
     const updatedPosition = diceValue!==6 ? newPosition in snakes ? snakes[newPosition] : newPosition in ladders ? ladders[newPosition] : newPosition: newPosition;
 
     board[currentPlayer] = updatedPosition <= 100 ? updatedPosition : board[currentPlayer];
-    if (updatedPosition === 100) return io.to(roomId).emit('snake-ladder-winner', { winner: rooms[roomId][currentPlayer === 'X' ? 'player2' : 'player1'].name });
+    if (updatedPosition === 100) return io.to(roomId).emit('snake-ladder-winner', { winner: rooms[roomId][currentPlayer === 'X' ? 'player1' : 'player2'].name });
 
     rooms[roomId].currentPlayer = diceValue !== 6 ? (currentPlayer === 'X' ? 'O' : 'X') : currentPlayer;
     io.to(roomId).emit('snake-ladder-updated', { board, currentPlayer: rooms[roomId].currentPlayer, diceRoll: diceValue });
-}
-
-        // socket.on('roll-dice-snake', ({roomId, currentPlayer, diceValue }) => {
-        //     const board = rooms[roomId].snake_ladder.board;
-        //     const currentPlayerName = rooms[roomId][currentPlayer === 'X' ? 'player2' : 'player1'].name;
-            
-        //     let newPosition = board[currentPlayer] + diceValue;
-        //     // console.log(`newPosition: ${newPosition}`);
-        //     // Check for snake or ladder
-        //     if(diceValue !== 6){
-        //         if (newPosition in snakes) newPosition = snakes[newPosition];
-        //         if (newPosition in ladders) newPosition = ladders[newPosition];
-        //     }
-        //     // Update position or declare winner if position is 100
-        //     if (newPosition <= 100) board[currentPlayer] = board[currentPlayer] ===0 ? (diceValue < 6 ? 0 : newPosition) : newPosition;
-        //     if (newPosition === 100) {
-        //         io.to(roomId).emit('snake-ladder-winner', { winner: currentPlayerName });
-        //     } else {
-        //         if (diceValue !== 6){
-        //             rooms[roomId].currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Switch turn
-        //         }
-        //         // console.log(`board-x: ${board.X}, ${board.O} `);
-        //         io.to(roomId).emit('snake-ladder-updated', { board: board, currentPlayer: rooms[roomId].currentPlayer, currentPlayerName: currentPlayerName, diceRoll: diceValue});
-        //     }
-        // });
-
+}   
 
 // Tic-Tac-Toe move handler
 function makeTicTacToeMove(io, { roomId, position, playerSymbol }) {
@@ -135,16 +117,41 @@ function makeTicTacToeMove(io, { roomId, position, playerSymbol }) {
     else if (board.every(cell => cell !== null)) io.in(roomId).emit('game-draw');
 }
 
-
-// Helper function to reset Tic-Tac-Toe game state
-function resetGame(io, roomId) {
+function makeConnect4Move(io, { roomId, column, playerSymbol }) {
     const room = rooms[roomId];
-    if (!room) return;
-    const gameSelected = room.selectedGame;
-    room[gameSelected].board = gameSelected === 'snake_ladder' ? { X: 0, O: 0 } : Array(gameSelected === 'ticTacToe' ? 9 : 57).fill(null);
-    io.to(roomId).emit('game-reseted', { board: room[gameSelected].board });
+    if (!room || room.selectedGame !== 'connect4') return;
+
+    const board = room.connect4.board;
+    let row = -1;
+
+    // Find the lowest empty row in the column
+    for (let r = 5; r >= 0; r--) {
+        if (!board[r][column]) {
+            board[r][column] = playerSymbol;
+            row = r;
+            break;
+        }
+    }
+
+    if (row === -1) return; // Column full
+
+    // Check for winner
+    if (checkConnect4Winner(board, row, column, playerSymbol)) {
+        io.to(roomId).emit('connect4-winner', { winner: playerSymbol });
+        return;
+    }
+
+    // Check for draw
+    const isDraw = board.every(row => row.every(cell => cell !== null));
+    if (isDraw) {
+        io.to(roomId).emit('connect4-draw');
+        return;
+    }
+
+    // Switch turn
+    room.currentPlayer = playerSymbol === 'X' ? 'O' : 'X';
+    io.to(roomId).emit('connect4-updated', { board, currentPlayer: room.currentPlayer });
 }
-    
 
 // Helper function to check for a Tic-Tac-Toe winner
 function checkWinner(board, roomId) {
@@ -162,6 +169,48 @@ function checkWinner(board, roomId) {
         }
     }
     return null; // No winner yet
+}
+
+function checkConnect4Winner(board, row, col, symbol) {
+    const directions = [
+        { dr: 0, dc: 1 },   // Horizontal
+        { dr: 1, dc: 0 },   // Vertical
+        { dr: 1, dc: 1 },   // Diagonal \
+        { dr: 1, dc: -1 }   // Diagonal /
+    ];
+
+    for (const { dr, dc } of directions) {
+        let count = 1;
+
+        for (let d = 1; d <= 3; d++) {
+            const r = row + dr * d, c = col + dc * d;
+            if (board[r] && board[r][c] === symbol) count++;
+            else break;
+        }
+
+        for (let d = 1; d <= 3; d++) {
+            const r = row - dr * d, c = col - dc * d;
+            if (board[r] && board[r][c] === symbol) count++;
+            else break;
+        }
+
+        if (count >= 4) return true;
+    }
+
+    return false;
+}
+
+// Helper function to reset game state
+function resetGame(io, roomId) {
+    const room = rooms[roomId];
+    if (!room) return;
+    const gameSelected = room.selectedGame;
+    if (gameSelected === 'connect4') {
+        room.connect4.board = createConnect4Board();
+    } else {
+        room[gameSelected].board = gameSelected === 'snake_ladder' ? { X: 0, O: 0 } : Array(gameSelected === 'ticTacToe' ? 9 : 57).fill(null);
+    }
+    io.to(roomId).emit('game-reseted', { board: room[gameSelected].board });
 }
 
 // export default { handleSocketConnection };

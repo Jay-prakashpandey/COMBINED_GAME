@@ -29,10 +29,11 @@ function createBoard(board, index){
   cell.id = `cell-${index}`;
   
   if ( index === 1 || index === board['X'] || index === board['O'] ) {
-    if(board['X'] ===0 || board['X'] === index){
+    
+    if(board['X'] ===0 || (board['X'] === index && board['X'] !== 0)){
       cell.classList.add(`player-X`);
     }  
-    if(board['O'] ===0 || board['O'] === index){
+    if(board['O'] ===0 || board['O'] === index && board['O'] !== 0){
       cell.classList.add(`player-O`);
     }
   } else {
@@ -107,7 +108,11 @@ function handleDiceRoll()  {
   // Start rolling animation
   // `dice${activePlayer}`.src = '/images/tenor.gif';
   const currentDice = activePlayer === 'X' ? diceX : diceO;
-  currentDice.src = '/images/tenor.gif';
+  currentDice.src ='';
+  setTimeout(()=>{
+    currentDice.src='/images/tenor.gif';
+  }, 60);
+  // currentDice.src = '/images/tenor.gif';
 
   setTimeout(() => {
     const diceRoll = Math.floor(Math.random() * 6) + 1;

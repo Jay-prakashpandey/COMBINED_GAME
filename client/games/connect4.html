@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONNECT-4</title>
+    <link rel="stylesheet" href="../css/connect4.css">
+</head>
+
+<body>
+    <div class="back-button">
+        <button id="Go-Back">← Go Back</button>
+    </div>
+    <div id="game-container">
+        <h1>Connect-4</h1>
+        <div class="player" id="playerX">Player X</div> 
+        <div id="game-board">
+            <!-- Dynamically generated cells will appear here -->
+        </div>
+        <div class="player" id="playerO">Player O</div>
+        <div id="game-info">
+            <p id="current-player">Current Turn: <span id="turn-indicator">X</span></p>
+            <button id="reset-button">Reset Game</button>
+        </div>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="../js/connect4.js"></script>
+</html>

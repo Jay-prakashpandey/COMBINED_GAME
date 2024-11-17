@@ -36,7 +36,6 @@ h1 {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    
 }
 
 /* Individual cell styling */
@@ -67,9 +66,7 @@ h1 {
 }
 
 #playerX {
-    position: absolute;
-    right: 50px;
-    top: 90px;
+    position: relative;
     background-color: #ed6a6a;
     width: auto;
     height: auto;
@@ -77,9 +74,7 @@ h1 {
 }
 
 #playerO {
-    position: absolute;
-    left: 50px;
-    bottom: -60px;
+    position: relative;
     background-color: rgb(89, 89, 242);
     width: auto;
     height: auto;
@@ -94,11 +89,12 @@ h1 {
     background: linear-gradient(to bottom, red, darkred);
     border-radius: 50% 50% 0 0;
     position: relative;
-    bottom: -40%;
+    bottom: -30%;
+    left: 25%;
 }
     
 .player-X::before {
-    content: "";
+    content: "X";
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -117,14 +113,15 @@ h1 {
     background: linear-gradient(to bottom, blue, darkblue);
     border-radius: 50% 50% 0 0;
     position: relative;
-    transform: translate(5px, -5px);
-    bottom: -15%;
+    transform: translate(5px, 5px);
+    bottom: -30%;
+    left: 20%;
 }
 
 .player-O::before {
-    content: "";
+    content: "O";
     position: absolute;
-    right: 50%;
+    left: 50%;
     transform: translateX(-50%);
     width: 20px;
     height: 20px;
