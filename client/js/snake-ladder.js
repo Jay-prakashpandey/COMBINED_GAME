@@ -21,8 +21,6 @@ document.getElementById('Go-Back').addEventListener('click', () => {
   socket.emit('back-click', {roomId});
 });
 
-
-
 function createBoard(board, index){
   const cell = document.createElement("div");
   cell.classList.add("box");
@@ -70,24 +68,41 @@ function toggleDice(){
   } else {
     currentDice.removeEventListener("click", handleDiceRoll);
   }
-  // if(activePlayer === 'X' ){
-  //   diceO.classList.add('hidden');
-  //   diceX.classList.remove('hidden');
-  //   if(activePlayer === playerSymbol){
-  //     diceX.addEventListener("click", handleDiceRoll);
-  //   }else{
-  //     diceO.removeEventListener("click", handleDiceRoll);
-  //   }
-  // }else{
-  //   diceX.classList.add('hidden');
-  //   diceO.classList.remove('hidden');
-  //   if(activePlayer === playerSymbol){
-  //     diceO.addEventListener("click", handleDiceRoll);
-  //   }else{
-  //     diceX.removeEventListener("click", handleDiceRoll);
-  //   }
-  // }
 }
+
+// Separate function to handle dice roll
+function handleDiceRoll()  {
+  rollingSound.play();
+  // Start rolling animation
+  // `dice${activePlayer}`.src = '/images/tenor.gif';
+  const currentDice = activePlayer === 'X' ? diceX : diceO;
+  currentDice.src ='/img/tenor.gif';
+  // setTimeout(()=>{
+  //   currentDice.src='/images/tenor.gif';
+  // }, 60);
+  // currentDice.src = '/images/tenor.gif';
+
+  setTimeout(() => {
+    const diceRoll = Math.floor(Math.random() * 6) + 1;
+    // diceValueDisplay.textContent = `You rolled: ${diceRoll}`;
+    // `dice${activePlayer}`.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
+    // currentDice.src = `/images/dice/dice-${diceRoll}.jpg`;
+    socket.emit("roll-dice-snake", { roomId, currentPlayer: activePlayer, diceValue: diceRoll });
+  }, 1000);
+
+}
+
+// Listen for dice roll updates (sync animation and dice value)
+socket.on("snake-ladder-dice-roll", ({ currentPlayer, diceValue }) => {
+  const currentDice = currentPlayer === 'X' ? diceX : diceO;
+
+  // Show dice roll animation
+  currentDice.src = '/img/tenor.gif';
+
+  setTimeout(() => {
+      currentDice.src = `/img/dice/dice-${diceValue}.jpg`; // Display final dice value
+  }, 1000);
+});
 
 // Handle receiving the game state after reconnection
 socket.on('reconnected', ({ board, currentPlayer, userSymbol, p1, p2 }) => {
@@ -102,32 +117,11 @@ socket.on('reconnected', ({ board, currentPlayer, userSymbol, p1, p2 }) => {
     toggleDice();
 });
 
-// Separate function to handle dice roll
-function handleDiceRoll()  {
-  rollingSound.play();
-  // Start rolling animation
-  // `dice${activePlayer}`.src = '/images/tenor.gif';
-  const currentDice = activePlayer === 'X' ? diceX : diceO;
-  currentDice.src ='';
-  setTimeout(()=>{
-    currentDice.src='/images/tenor.gif';
-  }, 60);
-  // currentDice.src = '/images/tenor.gif';
-
-  setTimeout(() => {
-    const diceRoll = Math.floor(Math.random() * 6) + 1;
-    // diceValueDisplay.textContent = `You rolled: ${diceRoll}`;
-    // `dice${activePlayer}`.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
-    currentDice.src = `/images/dice/dice-${diceRoll}.jpg`;
-    socket.emit("roll-dice-snake", { roomId, currentPlayer: activePlayer, diceValue: diceRoll });
-  }, 1000);
-
-}
 
 socket.on( "snake-ladder-updated", ({board, currentPlayer, currentPlayerName, diceRoll}) => {
     activePlayer = currentPlayer;
-    const currentDice = activePlayer === 'X' ? diceX : diceO;
-    currentDice.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
+    // const currentDice = activePlayer === 'X' ? diceX : diceO;
+    // currentDice.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
     updatePlayerPosition(board);
     if(diceRoll !== 6){
       // turnIndicator.textContent = ` ${currentPlayerName}'s Turn`; 
@@ -142,7 +136,7 @@ socket.on( "snake-ladder-updated", ({board, currentPlayer, currentPlayerName, di
 socket.on("snake-ladder-winner", ({ winner }) => {
   winSound.play();
   alert(`Player ${winner} wins the game!`);
-  document.getElementById('reset-game').classList.remove('hidden');
+  // document.getElementById('reset-game').classList.remove('hidden');
 });
 
 document.getElementById('resetButton').addEventListener('click', () => {

@@ -45,7 +45,8 @@ socket.on('redirect-to-game', ({ roomId, game }) => {
       'Snake and Ladder': `/snake-ladder`,
       'Ludo': `/ludo`,
       'Truth-Dare': `/truth-dare`,
-      'connect4': `/connect4`
+      'connect4': `/connect4`,
+      'chess': `/chess`
   };
   if (gameRoutes[game]) {
       window.location.href = `${gameRoutes[game]}?roomId=${roomId}&currentUser=${currentPlayer}`;

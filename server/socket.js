@@ -1,4 +1,5 @@
 let rooms = {}; // Store rooms by roomId
+const { Chess } = require('chess.js'); // Install chess.js via npm
 const snakes = { 99: 4, 94: 75, 70: 51, 52: 29, 30: 11 };
 const ladders = { 3: 84, 7: 53, 15: 96, 21: 98, 54: 93};
 const winPatterns = [
@@ -18,6 +19,8 @@ function handleSocketConnection(io) {
         socket.on('roll-dice-snake', data => rollDiceSnake(io, data));
         socket.on('make-move', data => makeTicTacToeMove(io, data));
         socket.on('make-move-connect4', data => makeConnect4Move(io, data));
+        socket.on('chess-move', ({ roomId, move }) => handleChessMove(io, roomId, move));
+        // common funtions
         socket.on('reset-game', ({ roomId }) => resetGame(io, roomId));
         socket.on('back-click', ({ roomId }) => io.to(roomId).emit('back-clicked'));
         socket.on('disconnect', () => console.log(`Player disconnected`, socket.id));
@@ -40,7 +43,8 @@ function createRoom(socket, playerName){
             connect4: { board: createConnect4Board()}, // 6 rows x 7 columns
             ticTacToe: { board: Array(9).fill(null)},
             ludo: {board:Array(57).fill(null)},
-            snake_ladder: {board: {X: 0, O: 0}}
+            snake_ladder: {board: {X: 0, O: 0}},
+            chess: new Chess()
         };
         socket.emit('room-created', { playerName, roomId });
     } catch (error) {
@@ -89,6 +93,13 @@ function selectGame(io, roomId, game) {
 }
 
 function rollDiceSnake(io, { roomId, currentPlayer, diceValue }) {
+    
+    // Step 1: Broadcast dice roll animation and value to all players
+    io.to(roomId).emit('snake-ladder-dice-roll', {
+        currentPlayer,
+        diceValue,
+    });
+
     const board = rooms[roomId].snake_ladder.board;
     let newPosition = board[currentPlayer] + diceValue;
     const updatedPosition = diceValue!==6 ? newPosition in snakes ? snakes[newPosition] : newPosition in ladders ? ladders[newPosition] : newPosition: newPosition;
@@ -115,6 +126,19 @@ function makeTicTacToeMove(io, { roomId, position, playerSymbol }) {
     const winner = checkWinner(board, roomId);
     if (winner) io.in(roomId).emit('tic-tac-toe-winner', { winner });
     else if (board.every(cell => cell !== null)) io.in(roomId).emit('game-draw');
+}
+
+// Chess-specific functions
+function handleChessMove(io, roomId, move) {
+    const room = rooms[roomId];
+    if (!room || !room.chess) return;
+
+    const game = room.chess;
+    const result = game.move(move);
+
+    if (result) {
+        io.to(roomId).emit('chess-move', { move });
+    }
 }
 
 function makeConnect4Move(io, { roomId, column, playerSymbol }) {
@@ -207,7 +231,10 @@ function resetGame(io, roomId) {
     const gameSelected = room.selectedGame;
     if (gameSelected === 'connect4') {
         room.connect4.board = createConnect4Board();
-    } else {
+    } else if(gameSelected === 'chess'){
+        rooms[roomId].chess = new Chess();
+    }
+    else {
         room[gameSelected].board = gameSelected === 'snake_ladder' ? { X: 0, O: 0 } : Array(gameSelected === 'ticTacToe' ? 9 : 57).fill(null);
     }
     io.to(roomId).emit('game-reseted', { board: room[gameSelected].board });

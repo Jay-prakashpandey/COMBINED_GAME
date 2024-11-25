@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#game-container {
+    text-align: center;
+    width: 400px;
+}
+
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(7, 50px);
+    grid-gap: 5px;
+    justify-content: center;
+    margin: 20px auto;
+    background: #0077b6;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.cell {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #90e0ef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.cell[data-player="X"] {
+    background: #ff595e;
+}
+
+.cell[data-player="O"] {
+    background: #ecec25;
+}
+
+#game-info {
+    margin-top: 20px;
+}
+
+
+#playerX {
+    background-color: darkgrey;
+    color: red;
+    font-size: larger;
+}
+
+#playerO {
+    background-color: darkslateblue;
+    color: #ecec25;
+    font-size: larger;
+}
+
+#Go-Back {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: red;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+#Go-Back:hover {
+    background-color: #ff595e;
+}
+
+#reset-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #00b4d8;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+#reset-button:hover {
+    background: #0077b6;
+}

@@ -32,7 +32,7 @@ h1 {
     border: 2px solid black;
     margin: 20px auto;
     overflow: hidden;
-    background-image: url('../images/snakes.jpeg'); /* Image background here */
+    background-image: url('../img/snakes.jpeg'); /* Image background here */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -84,12 +84,12 @@ h1 {
 /* Player colors */
 .player-X {
     /* background-color: red; Emoji for player X  */
-    width: 20px;
-    height: 30px;
+    width: 50%;
+    height: 50%;
     background: linear-gradient(to bottom, red, darkred);
     border-radius: 50% 50% 0 0;
     position: relative;
-    bottom: -30%;
+    bottom: -50%;
     left: 25%;
 }
     
@@ -98,8 +98,8 @@ h1 {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 20px;
-    height: 20px;
+    width: 75%;
+    height: 75%;
     background-color: #FF4D4D;
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -108,13 +108,13 @@ h1 {
 
 .player-O {
     /* background-color: blue; Emoji for player O  */
-    width: 20px;
-    height: 30px;
+    width: 50%;
+    height: 50%;
     background: linear-gradient(to bottom, blue, darkblue);
     border-radius: 50% 50% 0 0;
     position: relative;
     transform: translate(5px, 5px);
-    bottom: -30%;
+    bottom: -40%;
     left: 20%;
 }
 
@@ -123,8 +123,8 @@ h1 {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 20px;
-    height: 20px;
+    width: 75%;
+    height: 75%;
     background-color: #4D4DFF;
     border-radius: 50%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
