@@ -24,7 +24,7 @@ function handleSocketConnection(io) {
         // common funtions
         socket.on('reset-game', ({ roomId }) => resetGame(io, roomId));
         socket.on('back-click', ({ roomId }) => io.to(roomId).emit('back-clicked'));
-        socket.on('disconnect', () => console.log(`Player disconnected`, socket.id));
+        // socket.on('disconnect', () => console.log(`Player disconnected`, socket.id));
     });
 }
 
