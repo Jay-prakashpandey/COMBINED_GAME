@@ -51,13 +51,13 @@ body {
 
 #playerX {
     background-color: darkgrey;
-    color: red;
+    color: black;
     font-size: larger;
 }
 
 #playerO {
     background-color: darkslateblue;
-    color: #ecec25;
+    color: whitesmoke;
     font-size: larger;
 }
 
@@ -89,4 +89,12 @@ body {
 
 #reset-button:hover {
     background: #0077b6;
+}
+
+.highlight {
+    background-color: rgba(0, 255, 0, 0.6); /* Green highlight */
+    border: 2px solid #00ff00;
+}
+.square-55d63.highlight {
+    background-color: rgba(0, 255, 0, 0.5) !important;
 }

@@ -1,5 +1,5 @@
 const socket = io();
-const rollingSound = new Audio('/audio/rpg-dice-rolling-95182.mp3');
+const moveSound = new Audio('/audio/move.mp3');
 const winSound = new Audio('/audio/winharpsichord-39642.mp3');
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -44,7 +44,7 @@ function disableBoard() {
 function handleCellClick(e) {
   const cell = e.target;
   const position = parseInt(cell.id); // Get cell index from data attribute
-  socket.emit("make-move", { roomId, position, playerSymbol });
+  socket.emit("ticTacToe-move", { roomId, position, playerSymbol });
 }
 
 cells.forEach((cell) => {
@@ -67,7 +67,7 @@ socket.on('game-reseted',({board}) => {
 
 // Listen for a move from the other player
 socket.on('move-made', ({ position, playerSymbol }) => {
-  rollingSound.play();
+  moveSound.play();
   document.getElementById(position).textContent = playerSymbol;
 
   // Switch turn to the next player

@@ -87,7 +87,7 @@ function handleDiceRoll()  {
     // diceValueDisplay.textContent = `You rolled: ${diceRoll}`;
     // `dice${activePlayer}`.src = `/images/dice/dice-${diceRoll}.jpg`; // Display final result image
     // currentDice.src = `/images/dice/dice-${diceRoll}.jpg`;
-    socket.emit("roll-dice-snake", { roomId, currentPlayer: activePlayer, diceValue: diceRoll });
+    socket.emit("snake-move", { roomId, currentPlayer: activePlayer, diceValue: diceRoll });
   }, 1000);
 
 }

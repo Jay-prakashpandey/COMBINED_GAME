@@ -1,4 +1,6 @@
 const socket = io();
+const moveSound = new Audio('/audio/move.mp3');
+const winSound = new Audio('/audio/winharpsichord-39642.mp3');
 
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get('roomId');
@@ -33,9 +35,9 @@ function generateBoard() {
 function handleMove(event) {
     const cell = event.target;
     if (!cell.classList.contains('cell') || currentPlayer !== playerSymbol) return;
-
+    moveSound.play();
     const column = parseInt(cell.dataset.column);
-    socket.emit('make-move-connect4', { roomId, column, playerSymbol });
+    socket.emit('connect4-move', { roomId, column, playerSymbol });
 }
 
 // Update board UI
@@ -74,6 +76,7 @@ socket.on('connect4-updated', ({ board, currentPlayer: nextPlayer }) => {
 });
 
 socket.on('connect4-winner', ({ winner }) => {
+    winSound.play();
     alert(`${winner} wins!`);
 });
 

@@ -1,5 +1,5 @@
+const { Chess } = require("chess.js");
 let rooms = {}; // Store rooms by roomId
-const { Chess } = require('chess.js'); // Install chess.js via npm
 const snakes = { 99: 4, 94: 75, 70: 51, 52: 29, 30: 11 };
 const ladders = { 3: 84, 7: 53, 15: 96, 21: 98, 54: 93};
 const winPatterns = [
@@ -16,9 +16,10 @@ function handleSocketConnection(io) {
         socket.on('reconnect-room', data => reconnectRoom(socket, data));
         socket.on('update-room', ({ currentPlayer, roomId }) => updateRoom(socket, io, currentPlayer, roomId));
         socket.on('game-selected', ({ roomId, game }) => selectGame(io, roomId, game));
-        socket.on('roll-dice-snake', data => rollDiceSnake(io, data));
-        socket.on('make-move', data => makeTicTacToeMove(io, data));
-        socket.on('make-move-connect4', data => makeConnect4Move(io, data));
+        // Games handler functions 
+        socket.on('snake-move', data => handleSnakeLadderMove(io, data));
+        socket.on('ticTacToe-move', data => handleTicTacToeMove(io, data));
+        socket.on('connect4-move', data => handleConnect4Move(io, data));
         socket.on('chess-move', ({ roomId, move }) => handleChessMove(io, roomId, move));
         // common funtions
         socket.on('reset-game', ({ roomId }) => resetGame(io, roomId));
@@ -44,7 +45,7 @@ function createRoom(socket, playerName){
             ticTacToe: { board: Array(9).fill(null)},
             ludo: {board:Array(57).fill(null)},
             snake_ladder: {board: {X: 0, O: 0}},
-            chess: new Chess()
+            chess: {board: new Chess()}
         };
         socket.emit('room-created', { playerName, roomId });
     } catch (error) {
@@ -58,7 +59,6 @@ function joinRoom(socket, playerName, roomId) {
     socket.emit('room-joined', { playerName, roomId });
 }
         
-
 // Handle player reconnection
 function reconnectRoom(socket, { roomId, playerName, gameSelected }) {
     const room = rooms[roomId];
@@ -66,9 +66,12 @@ function reconnectRoom(socket, { roomId, playerName, gameSelected }) {
     socket.join(roomId);
     room.selectedGame = gameSelected;
     const playerSymbol = room.player1.name === playerName ? 'X' : 'O';
-    socket.emit('reconnected', { board: room[gameSelected].board, currentPlayer: room.currentPlayer, userSymbol: playerSymbol, p1:room.player1.name, p2:room.player2.name });
+    let _board = room[gameSelected].board;
+    _board = gameSelected==='chess'? _board.fen(): _board;
+    socket.emit('reconnected', { board: _board, currentPlayer: room.currentPlayer, userSymbol: playerSymbol, p1:room.player1.name, p2:room.player2.name });
 }
 
+// rejoining in room 
 function updateRoom(socket, io, currentPlayer, roomId) {
     const roomData = rooms[roomId];
     if (!roomData) return socket.emit('error', { message: 'Room does not exist' });
@@ -92,7 +95,7 @@ function selectGame(io, roomId, game) {
     }
 }
 
-function rollDiceSnake(io, { roomId, currentPlayer, diceValue }) {
+function handleSnakeLadderMove(io, { roomId, currentPlayer, diceValue }) {
     
     // Step 1: Broadcast dice roll animation and value to all players
     io.to(roomId).emit('snake-ladder-dice-roll', {
@@ -112,7 +115,7 @@ function rollDiceSnake(io, { roomId, currentPlayer, diceValue }) {
 }   
 
 // Tic-Tac-Toe move handler
-function makeTicTacToeMove(io, { roomId, position, playerSymbol }) {
+function handleTicTacToeMove(io, { roomId, position, playerSymbol }) {
     const room = rooms[roomId];
     if (!room || room.selectedGame !== 'ticTacToe') return;
     
@@ -131,17 +134,29 @@ function makeTicTacToeMove(io, { roomId, position, playerSymbol }) {
 // Chess-specific functions
 function handleChessMove(io, roomId, move) {
     const room = rooms[roomId];
-    if (!room || !room.chess) return;
+    if (!room || !room.chess.board) return;
 
-    const game = room.chess;
+    const game = room.chess.board;
     const result = game.move(move);
-
-    if (result) {
-        io.to(roomId).emit('chess-move', { move });
+    if(result){
+        if (game.in_checkmate) {
+            io.to(room).emit('game-win', game.turn());
+        }
+        // draw? 
+        else if (game.in_draw) {
+            io.to(room).emit('game-draw');
+        }
+        // game still on
+        else {
+            if (game.in_check) {
+                io.to(room).emit('in-Check', game.turn())
+            }
+            io.to(roomId).emit('updateBoard', move); // Sync board state
+        }
     }
 }
 
-function makeConnect4Move(io, { roomId, column, playerSymbol }) {
+function handleConnect4Move(io, { roomId, column, playerSymbol }) {
     const room = rooms[roomId];
     if (!room || room.selectedGame !== 'connect4') return;
 
@@ -232,7 +247,7 @@ function resetGame(io, roomId) {
     if (gameSelected === 'connect4') {
         room.connect4.board = createConnect4Board();
     } else if(gameSelected === 'chess'){
-        rooms[roomId].chess = new Chess();
+        rooms[roomId].chess.board.reset();
     }
     else {
         room[gameSelected].board = gameSelected === 'snake_ladder' ? { X: 0, O: 0 } : Array(gameSelected === 'ticTacToe' ? 9 : 57).fill(null);
