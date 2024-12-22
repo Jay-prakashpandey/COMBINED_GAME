@@ -1,12 +1,5 @@
 const { Chess } = require("chess.js");
 let rooms = {}; // Store rooms by roomId
-const snakes = { 99: 4, 94: 75, 70: 51, 52: 29, 30: 11 };
-const ladders = { 3: 84, 7: 53, 15: 96, 21: 98, 54: 93};
-const winPatterns = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-    [0, 4, 8], [2, 4, 6]             // Diagonals
-];
 
 function handleSocketConnection(io) {
     io.on('connection', (socket) => {
@@ -43,9 +36,9 @@ function createRoom(socket, playerName){
             selectedGame: null, currentPlayer: 'X', 
             connect4: { board: createConnect4Board()}, // 6 rows x 7 columns
             ticTacToe: { board: Array(9).fill(null)},
-            ludo: {board:Array(57).fill(null)},
-            snake_ladder: {board: {X: 0, O: 0}},
-            chess: {board: new Chess()}
+            ludo: { board:Array(57).fill(null)},
+            snake_ladder: { board: {X: 0, O: 0}},
+            chess: { board: new Chess()}
         };
         socket.emit('room-created', { playerName, roomId });
     } catch (error) {
@@ -124,11 +117,7 @@ function handleTicTacToeMove(io, { roomId, position, playerSymbol }) {
     
     board[position] = playerSymbol;
     room.currentPlayer = playerSymbol === 'X' ? 'O' : 'X';
-    io.to(roomId).emit('move-made', { position, playerSymbol });
-    
-    const winner = checkWinner(board, roomId);
-    if (winner) io.in(roomId).emit('tic-tac-toe-winner', { winner });
-    else if (board.every(cell => cell !== null)) io.in(roomId).emit('game-draw');
+    io.to(roomId).emit('updateBoard', { position, _activePlayer: room.currentPlayer });
 }
 
 // Chess-specific functions
@@ -139,104 +128,18 @@ function handleChessMove(io, roomId, move) {
     const game = room.chess.board;
     const result = game.move(move);
     if(result){
-        if (game.in_checkmate) {
-            io.to(room).emit('game-win', game.turn());
-        }
-        // draw? 
-        else if (game.in_draw) {
-            io.to(room).emit('game-draw');
-        }
-        // game still on
-        else {
-            if (game.in_check) {
-                io.to(room).emit('in-Check', game.turn())
-            }
-            io.to(roomId).emit('updateBoard', move); // Sync board state
-        }
+        io.to(roomId).emit('updateBoard', move); // Sync board state
     }
 }
 
-function handleConnect4Move(io, { roomId, column, playerSymbol }) {
+function handleConnect4Move(io, { roomId, row, column, playerSymbol }) {
     const room = rooms[roomId];
     if (!room || room.selectedGame !== 'connect4') return;
 
     const board = room.connect4.board;
-    let row = -1;
-
-    // Find the lowest empty row in the column
-    for (let r = 5; r >= 0; r--) {
-        if (!board[r][column]) {
-            board[r][column] = playerSymbol;
-            row = r;
-            break;
-        }
-    }
-
-    if (row === -1) return; // Column full
-
-    // Check for winner
-    if (checkConnect4Winner(board, row, column, playerSymbol)) {
-        io.to(roomId).emit('connect4-winner', { winner: playerSymbol });
-        return;
-    }
-
-    // Check for draw
-    const isDraw = board.every(row => row.every(cell => cell !== null));
-    if (isDraw) {
-        io.to(roomId).emit('connect4-draw');
-        return;
-    }
-
-    // Switch turn
+    board[row][column] = playerSymbol;
     room.currentPlayer = playerSymbol === 'X' ? 'O' : 'X';
-    io.to(roomId).emit('connect4-updated', { board, currentPlayer: room.currentPlayer });
-}
-
-// Helper function to check for a Tic-Tac-Toe winner
-function checkWinner(board, roomId) {
-    for (const pattern of winPatterns) {
-        const [a, b, c] = pattern;
-        // console.log(board[a]+','+board[b]+','+board[c]);
-        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-            let winner=null;
-            if(rooms[roomId].player1.Symbol === board[a]) {
-                winner = rooms[roomId].player1.name;
-            }else{
-                winner = rooms[roomId].player2.name;
-            }
-            return winner; // Return the winner ('X' or 'O')
-        }
-    }
-    return null; // No winner yet
-}
-
-function checkConnect4Winner(board, row, col, symbol) {
-    const directions = [
-        { dr: 0, dc: 1 },   // Horizontal
-        { dr: 1, dc: 0 },   // Vertical
-        { dr: 1, dc: 1 },   // Diagonal \
-        { dr: 1, dc: -1 }   // Diagonal /
-    ];
-
-    for (const { dr, dc } of directions) {
-        let count = 1;
-
-        for (let d = 1; d <= 3; d++) {
-            const r = row + dr * d, c = col + dc * d;
-            if (board[r] && board[r][c] === symbol) count++;
-            else break;
-        }
-
-        for (let d = 1; d <= 3; d++) {
-            const r = row - dr * d, c = col - dc * d;
-            if (board[r] && board[r][c] === symbol) count++;
-            else break;
-        }
-
-        if (count >= 4) return true;
-    }
-
-    return false;
+    io.to(roomId).emit('connect4-updated', { row, column, _currentPlayer: room.currentPlayer });
 }
 
 // Helper function to reset game state

@@ -2,8 +2,9 @@ const socket = io();
 const moveSound = new Audio('/audio/move.mp3');
 const checkmateSound = new Audio('/audio/checkmate.mp3');
 const winSound = new Audio('/audio/winharpsichord-39642.mp3');
-
- // Install chess.js via npm
+const checkSound = new Audio('/audio/capture.mp3');
+ 
+// Install chess.js via npm
 const urlParams = new URLSearchParams(window.location.search);
 const roomId = urlParams.get('roomId');
 const currentUser = urlParams.get('currentUser');
@@ -34,6 +35,7 @@ socket.on('reconnected', ({ board, currentPlayer, userSymbol, p1, p2 }) => {
   activePlayer = currentPlayer;
   turnIndicator.innerText = currentPlayer==='X'?p1:p2;
   initializeChess();
+  checkStatus();
 });
 
 // Initialize Chessboard.js and Chess.js
@@ -105,8 +107,6 @@ function handleMove(source, target) {
   if (!move) return 'snapback'; // Illegal move
   // Emit move to server
   socket.emit('chess-move', { roomId, move });
-  moveSound.play();
-  updateTurnIndicator();
   removeGreySquares();
   selectedPiece = null;
 }
@@ -135,12 +135,28 @@ function highlightValidMoves() {
   });
 }
 
+function checkStatus(){
+  if(game.in_checkmate()){
+    checkmateSound.play();
+    const winner = game.turn() == 'w' ? Gp2 : Gp1;
+    winSound.play();
+    alert(`${winner} wins the game`);
+  }else if(game.in_check()){
+    checkSound.play();
+  }else if(game.in_draw()){
+    alert("Game is draw");
+  }else{
+    moveSound.play();
+  }
+}
+
 socket.on("updateBoard", (move) => {
   game.move(move);
   chess_board.position(game.fen());
-  moveSound.play();
+  checkStatus();
   updateTurnIndicator();
 });
+
 
 // Reset the game
 document.getElementById('reset-button').addEventListener('click', () => {
@@ -162,17 +178,3 @@ document.getElementById('Go-Back').addEventListener('click', () => {
 socket.on('back-clicked', () => {
   window.location.href = `/room?roomId=${roomId}&currentPlayer=${currentUser}`;
 });
-
-socket.on('game-win', ({winner}) => {
-  winSound.play();
-  alert(`${winner} wins`);
-});
-
-socket.on('game-draw', ({}) =>{
-  alert(`game is draw`);
-});
-
-socket.on('in-check', ({})=>{
-  checkmateSound.play();
-});
-

@@ -12,14 +12,11 @@ let activePlayer = "X"; // The player whose turn it currently is
 const gameBoard = document.getElementById("game-board");
 const diceX = document.getElementById('dice-imageX');
 const diceO = document.getElementById('dice-imageO');
+const snakes = { 99: 4, 94: 75, 70: 51, 52: 29, 30: 11 };
+const ladders = { 3: 84, 7: 53, 15: 96, 21: 98, 54: 93};
 
 // Request the game state when reconnecting
 socket.emit('reconnect-room', { roomId, playerName: currentUser , gameSelected: 'snake_ladder'});
-
-document.getElementById('Go-Back').addEventListener('click', () => {
-  // If you want to go to a specific URL, use window.location.href
-  socket.emit('back-click', {roomId});
-});
 
 function createBoard(board, index){
   const cell = document.createElement("div");
@@ -147,6 +144,11 @@ document.getElementById('resetButton').addEventListener('click', () => {
 socket.on('game-reseted',({board}) => {
   // document.getElementById('reset-game').classList.add('hidden');
   updatePlayerPosition(board);
+});
+
+document.getElementById('Go-Back').addEventListener('click', () => {
+  // If you want to go to a specific URL, use window.location.href
+  socket.emit('back-click', {roomId});
 });
 
 socket.on('back-clicked', () => {
