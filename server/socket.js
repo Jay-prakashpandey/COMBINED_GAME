@@ -88,23 +88,19 @@ function selectGame(io, roomId, game) {
     }
 }
 
-function handleSnakeLadderMove(io, { roomId, currentPlayer, diceValue }) {
+function handleSnakeLadderMove(io, { roomId, _board, activePlayer, diceValue }) {
     
-    // Step 1: Broadcast dice roll animation and value to all players
-    io.to(roomId).emit('snake-ladder-dice-roll', {
-        currentPlayer,
-        diceValue,
-    });
-
     const board = rooms[roomId].snake_ladder.board;
-    let newPosition = board[currentPlayer] + diceValue;
-    const updatedPosition = diceValue!==6 ? newPosition in snakes ? snakes[newPosition] : newPosition in ladders ? ladders[newPosition] : newPosition: newPosition;
+    board.X = _board.X ;
+    board.O = _board.O ;
+    let newPosition = board[activePlayer] + diceValue;
 
-    board[currentPlayer] = updatedPosition <= 100 ? updatedPosition : board[currentPlayer];
-    if (updatedPosition === 100) return io.to(roomId).emit('snake-ladder-winner', { winner: rooms[roomId][currentPlayer === 'X' ? 'player1' : 'player2'].name });
+    const updatedPosition = board[activePlayer]=== 0 ? diceValue === 6 ? 1 : 0 :  newPosition ;
 
-    rooms[roomId].currentPlayer = diceValue !== 6 ? (currentPlayer === 'X' ? 'O' : 'X') : currentPlayer;
-    io.to(roomId).emit('snake-ladder-updated', { board, currentPlayer: rooms[roomId].currentPlayer, diceRoll: diceValue });
+    board[activePlayer] = updatedPosition <= 100 ? updatedPosition : board[activePlayer];
+
+    rooms[roomId].currentPlayer = diceValue !== 6 ? (activePlayer === 'X' ? 'O' : 'X') : activePlayer;
+    io.to(roomId).emit('updateBoard', { board, currentPlayer: rooms[roomId].currentPlayer, diceRoll: diceValue });
 }   
 
 // Tic-Tac-Toe move handler
@@ -155,7 +151,7 @@ function resetGame(io, roomId) {
     else {
         room[gameSelected].board = gameSelected === 'snake_ladder' ? { X: 0, O: 0 } : Array(gameSelected === 'ticTacToe' ? 9 : 57).fill(null);
     }
-    io.to(roomId).emit('game-reseted', { board: room[gameSelected].board });
+    io.to(roomId).emit('game-reseted');
 }
 
 // export default { handleSocketConnection };

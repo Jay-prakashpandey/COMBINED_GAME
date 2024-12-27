@@ -151,7 +151,7 @@ document.getElementById('reset-button').addEventListener('click', () => {
 });
 
 // game reseted
-socket.on('game-reseted', ({ board }) => {
+socket.on('game-reseted', () => {
     _board = board ;
     generateBoard(board);
     currentPlayerIndicator.textContent = 'X';
