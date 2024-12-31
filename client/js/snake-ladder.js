@@ -77,8 +77,6 @@ function generatePath(intPiecePosition, finalPiecePosition, diceRoll) {
 // Function to animate snake/ladder movement
 function animateSnakeLadder(path, symbol) {
   // let currentPosition = players[playerSymbol].position;
-  console.log(`path:${path}, cell-${_board[symbol]}`);
-  
   let index = 0;
   // console.log(`cell-${_board[symbol]}`);
   const animationInterval = setInterval(() => {
@@ -91,7 +89,7 @@ function animateSnakeLadder(path, symbol) {
     } else {
       clearInterval(animationInterval); 
     }
-  }, 500); // Adjust animation speed as needed
+  }, 250); // Adjust animation speed as needed
   
 }
 
@@ -128,13 +126,12 @@ socket.on('reconnected', ({ board, currentPlayer, userSymbol, p1, p2 }) => {
     document.getElementById('playerO').innerText=p2;
     activePlayer = currentPlayer;
     createBoard();
-    // turnIndicator.textContent = `Player ${activePlayer}'s Turn`;
     toggleDice();
 });
 
 socket.on( "updateBoard", ({board, currentPlayer, diceRoll}) => {
-    console.log(diceRoll, board.X, board.O);
-    if(board[activePlayer] === 100) {
+    
+    if(board.X === 100 || board.O === 100) {
       winSound.play();
       const winner = activePlayer === 'X' ? Gp1 : Gp2 ;
       alert(`${winner} win's the game`);
@@ -150,14 +147,12 @@ socket.on( "updateBoard", ({board, currentPlayer, diceRoll}) => {
       currentDice.src = `/img/dice/dice-${diceRoll}.jpg`;
       updatePlayerPosition(board, symbol, diceRoll);
       activePlayer = currentPlayer ;
-      // document.getElementById(`cell-${_board[activePlayer]}`).classList.remove(`player-${activePlayer}`);
-      _board[activePlayer] = board[activePlayer];
-      // document.getElementById(`cell-${_board[activePlayer]}`).classList.add(`player-${activePlayer}`);
-      setTimeout(() => {
-        toggleDice();
-      }, 500);
-      
+      // _board[activePlayer] = board[activePlayer];
     }, 1000);
+
+    setTimeout(() => {
+      toggleDice();
+    }, 2000);
     
   });
 

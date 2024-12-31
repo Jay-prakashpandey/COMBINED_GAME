@@ -98,7 +98,7 @@ document.getElementById('reset-game').addEventListener('click', () => {
 });
 
 // reset room 
-socket.on('game-reseted',({board}) => {
+socket.on('game-reseted',() => {
   _board=Array(9).fill(null);
   generateBoard();
 });
