@@ -19,10 +19,21 @@
       <h2>Hello <span id="displayName"></span>!</h2>
       <p>Would you like to create a new game room or join an existing one?</p>
 
-      <div class="buttons">
+      <!-- <div class="buttons">
         <button id="createRoomButton">Create Room</button>
         <button id="joinRoomButton">Join Room</button>
+      </div> -->
+      <div class="toggle-buttons">
+        <button id="createRoomButton" class="active">Create Room</button>
+        <button id="joinRoomButton">Join Room</button>
       </div>
+      <!-- <div id="createRoomSection">
+        <button id="createRoomButton">Create Room</button>
+        <div id="shareLinkContainer" class="hidden">
+          <p id="shareLink"></p>
+          <button id="copyLinkButton">Copy Link</button>
+        </div>
+      </div> -->
 
       <div id="joinRoomForm" class="hidden">
         <input type="text" id="roomId" placeholder="Enter room ID">

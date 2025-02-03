@@ -6,24 +6,189 @@
   <meta name="description" content="Multiplayer Ludo Game">
   <title>Ludo Game</title>
   <link rel="stylesheet" href="../css/ludo.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <!-- <link rel="stylesheet" href="main.css"> -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"> -->
 </head>
 <body>
   <div class="back-button">
-    <button id="Go-Back">← Go Back</button>
+    <button id="Go-Back" onclick="goBack()">← Go Back</button>
   </div>
   <h1>Ludo Game</h1>
+  <div class="mainframe">
+    <div class="diceboard">
+        <div class="info">
+            <span class="playername" id="playerX">
+               Player 1 
+            </span>
+            <img id="dice-imageX" class="dice-image dice-imageX" src="../img/dice/dice-6.jpg" onclick="handleDiceRoll()" alt="Dice">
+        </div>
+        
+    </div>
+    <div class="mdiceboard">
+        <div class="info">
+            <span class="mplayername" id="mplayerX">
+               Player 1 
+            </span>
+            <img id="mdice-imageX" class="dice-image dice-imageX" src="../img/dice/dice-6.jpg" onclick="handleDiceRoll()" alt="Dice">
+        </div>
+        <div class="info">
+             <span class="mplayername">
+            </span>
+            <div class="g-dice" >
+            </div>  
+        </div>
+    </div>
 
-  <div id="game-board">
-    <!-- Ludo board can be an image or HTML elements -->
-    <p>Game board will go here</p>
+     <div class="ludoboard">
+         <div class="red">
+             <div class="playerzone">
+             <div class="player" ><span class="rp r material-icons" id="p-0" onclick="pieceClicked(0)" >stars</span></div>
+             <div class="player" ><span class="rp r material-icons" id="p-1" onclick="pieceClicked(1)">stars</span></div>
+             <div class="player" ><span class="rp r material-icons" id="p-2" onclick="pieceClicked(2)">stars</span></div>
+             <div class="player" ><span class="rp r material-icons" id="p-3" onclick="pieceClicked(3)">stars</span></div>
+             </div>
+         </div>
+         <div class="astep step " id="cell-11"></div>
+         <div class="astep step " id="cell-12"></div>
+         <div class="astep step " id="cell-13"></div>
+         <div class="green">
+             <div class="playerzone">
+             <div class="player"><span></span></div>
+             <div class="player"><span></span></div>
+             <div class="player"><span></span></div>
+             <div class="player"><span></span></div>
+             </div>
+         </div>
+         
+         <div class="astep step " id="cell-10"></div>
+         <div class="astep greensafe " ></div>
+         <div class="astep gstop stop" id="cell-14"></div>
+         <div class="astep step rstop stop" id="cell-9"></div>
+         <div class="astep greensafe"></div>
+         <div class="astep step" id="cell-15"></div>
+         <div class="astep step " id="cell-8"></div>
+         <div class="astep greensafe"></div>
+         <div class="astep step " id="cell-16"></div>
+         <div class="astep step " id="cell-7"></div>
+         <div class="astep greensafe"></div>
+         <div class="astep step " id="cell-17"></div>
+         <div class="astep step " id="cell-6"></div>
+         <div class="astep greensafe"></div>
+         <div class="astep step " id="cell-18"></div>
+         
+         <div class="astep step " id="cell-52"></div>
+         <div class="astep rstop stop" id="cell-1"></div>
+         <div class="astep step " id="cell-2"></div>
+         <div class="astep step " id="cell-3"></div>
+         <div class="astep step " id="cell-4"></div>
+         <div class="astep step " id="cell-5"></div>
+         
+         <div class="centerbox" id="cell-100"></div>
+         
+         <div class="astep step " id="cell-19"></div>
+         <div class="astep step " id="cell-20"></div>
+         <div class="astep step " id="cell-21"></div>
+         <div class="astep step gstop stop" id="cell-22"></div>
+         <div class="astep step " id="cell-23"></div>
+         <div class="astep step " id="cell-24"></div>
+         
+         <div class="astep step " id="cell-51"></div>
+         <div class="astep redsafe " id="cell-53"></div>
+         <div class="astep redsafe " id="cell-54"></div>
+         <div class="astep redsafe " id="cell-55"></div>
+         <div class="astep redsafe " id="cell-56"></div>
+         <div class="astep redsafe " id="cell-57"></div>
+         
+         <div class="astep bluesafe " id="cell-62"></div>
+         <div class="astep bluesafe " id="cell-61"></div>
+         <div class="astep bluesafe " id="cell-60"></div>
+         <div class="astep bluesafe " id="cell-59"></div>
+         <div class="astep bluesafe " id="cell-58"></div>
+         <div class="astep step " id="cell-25"></div>
+         
+         <div class="astep step " id="cell-50"></div>
+         <div class="astep step " id="cell-49"></div>
+         <div class="astep step ystop stop" id="cell-48"></div>
+         <div class="astep step " id="cell-47"></div>
+         <div class="astep step " id="cell-46"></div>
+         <div class="astep step " id="cell-45"></div>
+         
+         <div class="astep step " id="cell-31"></div>
+         <div class="astep step " id="cell-30"></div>
+         <div class="astep step " id="cell-29"></div>
+         <div class="astep step " id="cell-28"></div>
+         <div class="astep bstop stop" id="cell-27"></div>
+         <div class="astep step " id="cell-26"></div>
+
+         <div class="yellow">
+            <div class="playerzone">
+            <div class="player"><span></span></div>
+            <div class="player"><span></span></div>
+            <div class="player"><span></span></div>
+            <div class="player"><span></span></div>
+            </div>
+        </div>
+         
+         <div class="astep step " id="cell-44"></div>
+         <div class="astep yellowsafe"></div>
+         <div class="astep step " id="cell-32"></div>
+         <div class="blue">
+            <div class="playerzone">
+            <div class="player" ><span class="rp b material-icons" id="p-4" onclick="pieceClicked(4)" >stars</span></div>
+            <div class="player" ><span class="rp b material-icons" id="p-5" onclick="pieceClicked(5)" >stars</span></div>
+            <div class="player" ><span class="rp b material-icons" id="p-6" onclick="pieceClicked(6)" >stars</span></div>
+            <div class="player" ><span class="rp b material-icons" id="p-7" onclick="pieceClicked(7)" >stars</span></div>
+            </div>
+        </div>
+         
+         <div class="astep step " id="cell-43"></div>
+         <div class="astep yellowsafe"></div>
+         <div class="astep step " id="cell-33"></div>
+         <div class="astep step " id="cell-42"></div>
+         <div class="astep yellowsafe"></div>
+         <div class="astep step " id="cell-34"></div>
+         <div class="astep step " id="cell-41"></div>
+         <div class="astep yellowsafe"></div>
+         <div class="astep step bstop " id="cell-35"></div>
+         <div class="astep ystop stop" id="cell-40"></div>
+         <div class="astep yellowsafe"></div>
+         <div class="astep step " id="cell-36"></div>
+         <div class="astep step " id="cell-39"></div>
+         <div class="astep step " id="cell-38"></div>
+         <div class="astep step " id="cell-37"></div>
+        </div>
+        <div class="diceboard">
+            <div class="info" >
+                <span class="playername" >
+                </span>
+            </div>
+            <div class="info">
+                <img id="dice-imageO" class="dice-imageO dice-image" src="../img/dice/dice-6.jpg" onclick="handleDiceRoll()" alt="dice">
+                <span class="playername" id="playerO">
+                   Player 3
+                </span>
+            </div>
+        </div>
+        
+        <div class="mdiceboard">
+            <div class="info">
+                <span class="mplayername">
+                </span>
+            </div>
+            <div class="info">
+                <img id="dice-imageO" class="dice-imageO dice-image" src="../img/dice/dice-6.jpg" onclick="handleDiceRoll()" alt="dice">
+                <span class="mplayername" id="mplayerO">
+                   Player 3
+                </span>
+            </div>
+        </div>
+ </div>  
+
+  <div id="game-info">
+    <p id="current-player">Current Turn: <span id="turn-indicator">X</span></p>
+    <button id="reset-game" onclick="resetGame()">Reset Game</button>
   </div>
-
-  <div id="game-controls">
-    <button id="roll-dice">Roll Dice</button>
-    <p id="dice-result">Dice: <span id="dice-value">0</span></p>
-    <p id="turn-indicator">Player 1's Turn</p>
-  </div>
-
   <script src="/socket.io/socket.io.js"></script>
   <script src="../js/ludo.js"></script>
 </body>

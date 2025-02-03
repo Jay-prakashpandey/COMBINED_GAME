@@ -37,6 +37,7 @@ document.getElementById('startGameButton').addEventListener('click', () => {
 
 socket.on('game-selection-update', ({ selectedGame }) => {
   document.getElementById('gameSelect').value = selectedGame ;
+  document.getElementById('gameSelected').innerText = selectedGame;
 });
 
 socket.on('redirect-to-game', ({ roomId, game }) => {

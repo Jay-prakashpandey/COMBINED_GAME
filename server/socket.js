@@ -14,16 +14,18 @@ function handleSocketConnection(io) {
         socket.on('ticTacToe-move', data => handleTicTacToeMove(io, data));
         socket.on('connect4-move', data => handleConnect4Move(io, data));
         socket.on('chess-move', ({ roomId, move }) => handleChessMove(io, roomId, move));
+        socket.on('ludo-move', data => handleLudoMove(io, data));
+        socket.on('dice-roll', data => handleDiceRoll(io, data));
         // common funtions
         socket.on('reset-game', ({ roomId }) => resetGame(io, roomId));
         socket.on('back-click', ({ roomId }) => io.to(roomId).emit('back-clicked'));
-        // socket.on('disconnect', () => console.log(`Player disconnected`, socket.id));
+        // socket.on('disconnect', ({ roomId }) => io.to(roomId).emit('playerDisconnected'));
     });
 }
 
-// Helper functions for Connect-4
-function createConnect4Board() {
-    return Array(6).fill().map(() => Array(7).fill(null)); // 6 rows x 7 columns
+function handleDiceRoll(io, data){
+    rooms[data.roomId].currentPlayer=data.activePlayer;
+    io.to(data.roomId).emit('dice-rolled', {diceValue: data.diceValue, currentPlayer:data.activePlayer});
 }
         
 // console.log('A user connected with socket ID:', socket.id);
@@ -34,12 +36,13 @@ function createRoom(socket, playerName){
         rooms[roomId] = { 
             player1: null, player2: null, 
             selectedGame: null, currentPlayer: 'X', 
-            connect4: { board: createConnect4Board()}, // 6 rows x 7 columns
+            connect4: { board: Array(6).fill().map(() => Array(7).fill(null))}, // 6 rows x 7 columns
             ticTacToe: { board: Array(9).fill(null)},
-            ludo: { board:Array(57).fill(null)},
+            ludo: { board: Array(8).fill(-1)},
             snake_ladder: { board: {X: 0, O: 0}},
             chess: { board: new Chess()}
         };
+        socket.join(roomId);
         socket.emit('room-created', { playerName, roomId });
     } catch (error) {
         console.error('Error creating room:', error);
@@ -79,6 +82,7 @@ function updateRoom(socket, io, currentPlayer, roomId) {
     }
 }
 
+// update selected Game 
 function selectGame(io, roomId, game) {
     const room=rooms[roomId];
     if (room) {
@@ -88,9 +92,19 @@ function selectGame(io, roomId, game) {
     }
 }
 
+function handleLudoMove(io, {roomId, _board, _pno , activePlayer, diceValue}){
+    const room=rooms[roomId].ludo;
+    room.board=_board;
+    room.currentPlayer=activePlayer;
+    // console.log(_board);
+    io.to(roomId).emit('updateBoard', { board: _board, currentPlayer: room.currentPlayer, diceRoll: diceValue , pno:_pno});
+
+}
+
 function handleSnakeLadderMove(io, { roomId, _board, activePlayer, diceValue }) {
+    const room = rooms[roomId];
+    const board = room.snake_ladder.board;
     
-    const board = rooms[roomId].snake_ladder.board;
     board.X = _board.X ;
     board.O = _board.O ;
     let newPosition = board[activePlayer] + diceValue;
@@ -100,7 +114,7 @@ function handleSnakeLadderMove(io, { roomId, _board, activePlayer, diceValue }) 
     board[activePlayer] = updatedPosition <= 100 ? updatedPosition : board[activePlayer];
 
     rooms[roomId].currentPlayer = diceValue !== 6 ? (activePlayer === 'X' ? 'O' : 'X') : activePlayer;
-    io.to(roomId).emit('updateBoard', { board, currentPlayer: rooms[roomId].currentPlayer, diceRoll: diceValue });
+    io.to(roomId).emit('updateBoard', { board, currentPlayer: room.currentPlayer, diceRoll: diceValue });
 }   
 
 // Tic-Tac-Toe move handler
@@ -128,6 +142,7 @@ function handleChessMove(io, roomId, move) {
     }
 }
 
+// connect4 functions 
 function handleConnect4Move(io, { roomId, row, column, playerSymbol }) {
     const room = rooms[roomId];
     if (!room || room.selectedGame !== 'connect4') return;
@@ -144,7 +159,7 @@ function resetGame(io, roomId) {
     if (!room) return;
     const gameSelected = room.selectedGame;
     if (gameSelected === 'connect4') {
-        room.connect4.board = createConnect4Board();
+        room.connect4.board = Array(6).fill().map(() => Array(7).fill(null));
     } else if(gameSelected === 'chess'){
         rooms[roomId].chess.board.reset();
     }
